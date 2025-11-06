@@ -1,0 +1,105 @@
+# =========================
+# General
+# =========================
+# Build outputs
+/build/
+/bin/
+/out/
+/dist/
+/lib/
+/obj/
+/Debug/
+/Release/
+*.exe
+*.dll
+*.so
+*.dylib
+*.lib
+*.a
+*.o
+*.obj
+*.pch
+*.pdb
+*.ilk
+*.manifest
+*.idb
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+compile_commands.json
+
+# Code::Blocks
+*.depend
+*.layout
+
+# CLion / JetBrains
+.idea/
+cmake-build-*/
+
+# Visual Studio
+.vs/
+*.vcxproj.user
+*.vcxproj.filters
+*.user
+*.suo
+*.ncb
+*.aps
+*.opendb
+*.VC.db
+
+# Qt Creator
+*.pro.user
+*.qmake.stash
+
+# Xcode
+*.xcworkspace
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+DerivedData/
+
+# OS-specific
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# Logs / temp files
+*.log
+*.tmp
+*.bak
+*.swp
+*.swn
+*.swo
+*.swm
+
+# Testing / Coverage
+*.gcda
+*.gcno
+*.gcov
+coverage/
+*.profraw
+*.profdata
+
+# =========================
+# Custom user section
+# =========================
+# Ignore local test executables or temp scripts
+/test_*/
+/temp_*/
+/sandbox/
+
+# Ignore generated documentation
+/docs/html/
+docs/doxygen/
+*.dox
