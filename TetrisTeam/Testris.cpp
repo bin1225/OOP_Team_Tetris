@@ -425,6 +425,7 @@ int merge_block(int shape, int angle, int x, int y)
 	{
 		for (j = 0; j < 4; j++)
 		{
+			if (total_block[y + i][x + j] == 1) continue;
 			total_block[y + i][x + j] |= block[shape][angle][i][j];
 		}
 	}
