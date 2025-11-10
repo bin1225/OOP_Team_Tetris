@@ -404,11 +404,10 @@ int strike_check(int shape, int angle, int x, int y)
 	{
 		for (j = 0; j < 4; j++)
 		{
-			if (((x + j) == 0) || ((x + j) == 13))
+			if (((x + j) <= 0) || ((x + j) >= 13))
 				block_dat = 1;
 			else
 				block_dat = total_block[y + i][x + j];
-
 
 			if ((block_dat == 1) && (block[shape][angle][i][j] == 1))																							//ÁÂÃøº®ÀÇ ÁÂÇ¥¸¦ »©±âÀ§ÇÔ
 			{
@@ -492,6 +491,7 @@ int move_block(int* shape, int* angle, int* x, int* y, int* next_shape)
 
 int rotate_block(int shape, int* angle, int* x, int* y)
 {
+
 	return 0;
 }
 
