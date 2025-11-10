@@ -131,7 +131,7 @@ int main()
 						if (strike_check(block_shape, (block_angle + 1) % 4, block_x, block_y) == 0)
 						{
 							erase_cur_block(block_shape, block_angle, block_x, block_y);
-							block_angle = (block_angle + 1) % 4;
+							rotate_block(block_shape, &block_angle, &block_x, &block_y);
 							show_cur_block(block_shape, block_angle, block_x, block_y);
 						}
 						break;
@@ -437,7 +437,6 @@ int merge_block(int shape, int angle, int x, int y)
 
 int block_start(int shape, int* angle, int* x, int* y)
 {
-
 	*x = 5;
 	*y = -3;
 	*angle = 0;
@@ -492,7 +491,7 @@ int move_block(int* shape, int* angle, int* x, int* y, int* next_shape)
 
 int rotate_block(int shape, int* angle, int* x, int* y)
 {
-
+	*angle = (*angle + 1) % 4;
 	return 0;
 }
 
