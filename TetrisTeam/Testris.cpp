@@ -125,7 +125,7 @@ int main()
 				{
 					keytemp = _getche();
 					switch (keytemp)
-					{
+          {
 					case KEY_UP:		//회전하기
 
 						if (strike_check(block_shape, (block_angle + 1) % 4, block_x, block_y) == 0)
@@ -147,7 +147,6 @@ int main()
 						}
 						break;
 					case KEY_RIGHT:		//오른쪽으로 이동
-
 						if (block_x < 14)
 						{
 							erase_cur_block(block_shape, block_angle, block_x, block_y);
@@ -178,7 +177,6 @@ int main()
 
 				show_cur_block(block_shape, block_angle, block_x, block_y);
 			}
-
 			if (stage_data[level].clear_line == lines)	//클리어 스테이지
 			{
 				level++;
@@ -319,7 +317,6 @@ int show_cur_block(int shape, int angle, int x, int y)
 			{
 				gotoxy((i + x) * 2 + ab_x, j + y + ab_y);
 				printf("■");
-
 			}
 		}
 	}
@@ -540,6 +537,7 @@ int check_full_line()
 int show_next_block(int shape)
 {
 	int i, j;
+
 	SetColor((level + 1) % 6 + 1);
 	for (i = 1; i < 7; i++)
 	{
@@ -552,13 +550,20 @@ int show_next_block(int shape)
 			}
 			else {
 				printf("  ");
-			}
-
 		}
 	}
+
+	for (i = 2; i < 6; i++)
+	{
+		gotoxy(35, i);
+		printf("        ");
+	}
+
 	show_cur_block(shape, 0, 15, 1);
 	return 0;
 }
+
+
 
 int show_gamestat()
 {
@@ -610,7 +615,6 @@ int input_data()
 	Sleep(10);
 	gotoxy(10, 13);
 	printf("┗━━━━━━━━━━━━━━┛");
-
 
 	while (i < 1 || i>8)
 	{
