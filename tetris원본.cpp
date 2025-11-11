@@ -87,12 +87,14 @@ int show_cur_block(int shape,int angle,int x,int y);	//진행중인 블럭을 �
 int erase_cur_block(int shape,int angle,int x,int y);	//블럭 진행의 잔상을 지우기 위한 함수
 int show_total_block();	//쌓여져있는 블럭을 화면에 표시한다.
 int show_next_block(int shape);
+
 int make_new_block();	//return값으로 block의 모양번호를 알려줌
 int strike_check(int shape,int angle,int x,int y);	//블럭이 화면 맨 아래에 부닥쳤는지 검사 부닥치면 1을리턴 아니면 0리턴
 int merge_block(int shape,int angle,int x,int y);	//블럭이 바닥에 닿았을때 진행중인 블럭과 쌓아진 블럭을 합침
 int block_start(int shape,int* angle,int* x,int* y);	//블럭이 처음 나올때 위치와 모양을 알려줌
 int move_block(int* shape,int* angle,int* x,int* y,int* next_shape);	//게임오버는 1을리턴 바닥에 블럭이 닿으면 2를 리턴
 int rotate_block(int shape,int* angle,int* x,int* y);
+
 int show_gameover();
 int show_gamestat();
 int show_logo();
@@ -210,10 +212,6 @@ int gotoxy(int x,int y)
 {
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE); 
 	COORD pos; 
-	if (x < 0)
-		x = -x;
-	if (y < 0)
-		y = -y;
 	pos.Y = (short)y;
 	pos.X = (short)x;
 	SetConsoleCursorPosition(hConsole, pos); 
@@ -258,13 +256,13 @@ int init()
 
 	stage_data[0].speed=40;
 	stage_data[0].stick_rate=20;	
-	stage_data[0].clear_line=2;
+	stage_data[0].clear_line=2; // 테스트용
 	stage_data[1].speed=38;
 	stage_data[1].stick_rate=18;
-	stage_data[1].clear_line=5;
+	stage_data[1].clear_line=20;
 	stage_data[2].speed=35;
 	stage_data[2].stick_rate=18;
-	stage_data[2].clear_line=10;
+	stage_data[2].clear_line=20;
 	stage_data[3].speed=30;
 	stage_data[3].stick_rate=17;
 	stage_data[3].clear_line=20;
@@ -289,104 +287,90 @@ int init()
 	return 0;
 }
 
-int show_cur_block(int shape,int angle,int x,int y)
-{
-	int i,j;
-	
-	switch(shape)
-	{
-	case 0:
-		SetColor(RED);
-		break;
-	case 1:
-		SetColor(BLUE);
-		break;
-	case 2:
-		SetColor(SKY_BLUE);
-		break;
-	case 3:
-		SetColor(WHITE);
-		break;
-	case 4:
-		SetColor(YELLOW);
-		break;
-	case 5:
-		SetColor(VOILET);
-		break;
-	case 6:
-		SetColor(GREEN);
-		break;
-	}
+int show_cur_block(int shape, int angle, int x, int y) {
+    int i, j;
 
-	for(i=0;i<4;i++)
-	{
-		for(j=0;j<4;j++)
-		{
-			if( (j+y) <0)
-				continue;
+    switch (shape) {
+        case 0:
+            SetColor(RED);
+            break;
+        case 1:
+            SetColor(BLUE);
+            break;
+        case 2:
+            SetColor(SKY_BLUE);
+            break;
+        case 3:
+            SetColor(WHITE);
+            break;
+        case 4:
+            SetColor(YELLOW);
+            break;
+        case 5:
+            SetColor(VOILET);
+            break;
+        case 6:
+            SetColor(GREEN);
+            break;
+    }
 
-			if(block[shape][angle][j][i] == 1)
-			{
-				gotoxy((i+x)*2+ab_x,j+y+ab_y);
-				printf("■");
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 4; j++) {
+            if ((j + y) < 0)
+                continue;
 
-			}
-		}
-	}
-	SetColor(BLACK);
-	gotoxy(77,23);
-	return 0;
+            if (block[shape][angle][j][i] == 1) {
+                gotoxy((i + x) * 2 + ab_x, j + y + ab_y);
+                printf("■");
+            }
+        }
+    }
+    SetColor(BLACK);
+    gotoxy(77, 23);
+    return 0;
 }
 
-int erase_cur_block(int shape,int angle,int x,int y)
-{
-	int i,j;
-	for(i=0;i<4;i++)
-	{
-		for(j=0;j<4;j++)
-		{
-			if(block[shape][angle][j][i] == 1)
-			{
-				gotoxy((i+x)*2+ab_x,j+y+ab_y);
-				printf("  ");
-				//break;
-				
-			}
-		}
-	}
-	return 0;	
+int erase_cur_block(int shape, int angle, int x, int y) {
+    int i, j;
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 4; j++) {
+            if (block[shape][angle][j][i] == 1) {
+                gotoxy((i + x) * 2 + ab_x, j + y + ab_y);
+                printf("  ");
+                //break;
+
+            }
+        }
+    }
+    return 0;
 }
 
 
 
-int show_total_block()
-{
-	int i,j;
-	SetColor(DARK_GRAY);
-	for(i=0;i<21;i++)
-	{
-		for(j=0;j<14;j++)
-		{
-			if(j==0 || j==13 || i==20)		//레벨에 따라 외벽 색이 변함
-			{
-				SetColor((level %6) +1);
-				
-			}else{
-				SetColor(DARK_GRAY);
-			}
-			gotoxy( (j*2)+ab_x, i+ab_y );
-			if(total_block[i][j] == 1)
-			{	
-				printf("■");
-			}else{
-				printf("  ");
-			}
-			
-		}
-	}
-	SetColor(BLACK);
-	gotoxy(77,23);
-	return 0;
+int show_total_block() {
+    int i, j;
+    SetColor(DARK_GRAY);
+    for (i = 0; i < 21; i++) {
+        for (j = 0; j < 14; j++) {
+            if (j == 0 || j == 13 || i == 20)        //레벨에 따라 외벽 색이 변함
+            {
+                SetColor((level % 6) + 1);
+
+            } else {
+                SetColor(DARK_GRAY);
+            }
+            gotoxy((j * 2) + ab_x, i + ab_y);
+            if (total_block[i][j] == 1) {
+                printf("■");
+            } else {
+                printf("  ");
+            }
+
+        }
+    }
+    SetColor(BLACK);
+    gotoxy(77, 23);
+    return 0;
 }
 
 int make_new_block()
@@ -403,44 +387,39 @@ int make_new_block()
 }
 
 
-int strike_check(int shape,int angle,int x,int y)
-{
-	int i,j;
-	int block_dat;
+int strike_check(int shape, int angle, int x, int y) {
+    int i, j;
+    int block_dat;
 
-	for(i=0;i<4;i++)
-	{
-		for(j=0;j<4;j++)
-		{
-			if(  ((x+j) == 0)  || ((x+j) == 13) )
-				block_dat = 1;
-			else
-				block_dat = total_block[y+i][x+j];
-			
-			
-			if((block_dat == 1) && (block[shape][angle][i][j] == 1))																							//좌측벽의 좌표를 빼기위함
-			{
-				return 1;
-			}
-		}
-	}
-	return 0;
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 4; j++) {
+            if (((x + j) <= 0) || ((x + j) >= 13))
+                block_dat = 1;
+            else
+                block_dat = total_block[y + i][x + j];
+
+            if ((block_dat == 1) && (block[shape][angle][i][j] ==
+                                     1))                                                                                            //좌측벽의 좌표를 빼기위함
+            {
+                return 1;
+            }
+        }
+    }
+    return 0;
 }
 
-int merge_block(int shape,int angle,int x,int y)
-{
-	int i,j;
-	for(i=0;i<4;i++)
-	{
-		for(j=0;j<4;j++)
-		{
-			total_block[y+i][x+j] |=  block[shape][angle][i][j];
-		}
-	}
-	check_full_line();
-	show_total_block();
-	
-	return 0;
+int merge_block(int shape, int angle, int x, int y) {
+    int i, j;
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 4; j++) {
+            if (total_block[y + i][x + j] == 1) continue;
+            total_block[y + i][x + j] |= block[shape][angle][i][j];
+        }
+    }
+    check_full_line();
+    show_total_block();
+
+    return 0;
 }
 
 int block_start(int shape,int* angle,int* x,int* y)
@@ -454,7 +433,7 @@ int block_start(int shape,int* angle,int* x,int* y)
 
 int show_gameover()
 {
-	system("cls");
+	// system("cls");
 	SetColor(RED);
 	gotoxy(15,8);
 	printf("┏━━━━━━━━━━━━━━━━━━━━━━━━━━┓");
@@ -499,9 +478,9 @@ int move_block(int* shape,int* angle,int* x,int* y,int* next_shape)
 	return 0;
 }
 
-int rotate_block(int shape,int* angle,int* x,int* y)
-{
-	return 0;
+int rotate_block(int shape, int *angle, int *x, int *y) {
+    *angle = (*angle + 1) % 4;
+    return 0;
 }
 
 int check_full_line()
@@ -542,7 +521,7 @@ int check_full_line()
 			score+= 100+(level*10) + (rand()%10);
 			show_gamestat();
 
-			i--; // 확인요망
+			// i--;
 		}
 	}
 	return 0;
@@ -565,8 +544,13 @@ int show_next_block(int shape)
 			}
 
 		}
+
+		    for (i = 2; i < 6; i++) {
+            gotoxy(35, i);
+            printf("        ");
+        }
 	}
-	show_cur_block(shape,0,16,1);
+	show_cur_block(shape,0,15,1); // 16->15
 	return 0;
 }
 
@@ -626,7 +610,7 @@ int input_data()
 	{
 		gotoxy(10,3);
 		printf("Select Start level[1-8]:       \b\b\b\b\b\b\b");
-		 scanf_s("%d",&i); // 아래와같이 수정
+		 scanf_s("%d",&i);
 
 		/*if (scanf_s("%d", &i) != 1) {
 			while (_kbhit()) 
