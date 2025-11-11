@@ -3,95 +3,98 @@
 #include <string.h>
 #include <Windows.h>
 #include <time.h>
+#include <iostream>
 
 //*********************************
-//»ó¼ö ¼±¾ğ
+//ìƒìˆ˜ ì„ ì–¸
 //*********************************
 
-#define EXT_KEY			0xffffffe0	//È®ÀåÅ° ÀÎ½Ä°ª 
+#define EXT_KEY			0xffffffe0	//í™•ì¥í‚¤ ì¸ì‹ê°’ 
 #define KEY_LEFT		0x4b
 #define KEY_RIGHT		0x4d
 #define KEY_UP			0x48
 #define KEY_DOWN		0x50
 
 //*********************************
-//±¸Á¶Ã¼ ¼±¾ğ
+//êµ¬ì¡°ì²´ ì„ ì–¸
 //*********************************
-struct STAGE {		//°¢ ½ºÅ×ÀÌÁö¸¶´ÙÀÇ ³­ÀÌµµ ¼³Á¤
-	int	speed;	//¼ıÀÚ°¡ ³·À»¼ö·Ï ¼Óµµ°¡ ºü¸£´Ù
-	int stick_rate;		//¸·´ë°¡ ³ª¿À´Â È®·ü 0~99 , 99¸é ¸·´ë±â¸¸ ³ª¿È
+struct STAGE {		//ê° ìŠ¤í…Œì´ì§€ë§ˆë‹¤ì˜ ë‚œì´ë„ ì„¤ì •
+	int	speed;	//ìˆ«ìê°€ ë‚®ì„ìˆ˜ë¡ ì†ë„ê°€ ë¹ ë¥´ë‹¤
+	int stick_rate;		//ë§‰ëŒ€ê°€ ë‚˜ì˜¤ëŠ” í™•ë¥  0~99 , 99ë©´ ë§‰ëŒ€ê¸°ë§Œ ë‚˜ì˜´
 	int clear_line;
 };
 
 enum {
-	BLACK,      /*  0 : ±î¸Á */
-	DARK_BLUE,    /*  1 : ¾îµÎ¿î ÆÄ¶û */
-	DARK_GREEN,    /*  2 : ¾îµÎ¿î ÃÊ·Ï */
-	DARK_SKY_BLUE,  /*  3 : ¾îµÎ¿î ÇÏ´Ã */
-	DARK_RED,    /*  4 : ¾îµÎ¿î »¡°­ */
-	DARK_VOILET,  /*  5 : ¾îµÎ¿î º¸¶ó */
-	DARK_YELLOW,  /*  6 : ¾îµÎ¿î ³ë¶û */
-	GRAY,      /*  7 : È¸»ö */
-	DARK_GRAY,    /*  8 : ¾îµÎ¿î È¸»ö */
-	BLUE,      /*  9 : ÆÄ¶û */
-	GREEN,      /* 10 : ÃÊ·Ï */
-	SKY_BLUE,    /* 11 : ÇÏ´Ã */
-	RED,      /* 12 : »¡°­ */
-	VOILET,      /* 13 : º¸¶ó */
-	YELLOW,      /* 14 : ³ë¶û */
-	WHITE,      /* 15 : ÇÏ¾ç */
+	BLACK,      /*  0 : ê¹Œë§ */
+	DARK_BLUE,    /*  1 : ì–´ë‘ìš´ íŒŒë‘ */
+	DARK_GREEN,    /*  2 : ì–´ë‘ìš´ ì´ˆë¡ */
+	DARK_SKY_BLUE,  /*  3 : ì–´ë‘ìš´ í•˜ëŠ˜ */
+	DARK_RED,    /*  4 : ì–´ë‘ìš´ ë¹¨ê°• */
+	DARK_VOILET,  /*  5 : ì–´ë‘ìš´ ë³´ë¼ */
+	DARK_YELLOW,  /*  6 : ì–´ë‘ìš´ ë…¸ë‘ */
+	GRAY,      /*  7 : íšŒìƒ‰ */
+	DARK_GRAY,    /*  8 : ì–´ë‘ìš´ íšŒìƒ‰ */
+	BLUE,      /*  9 : íŒŒë‘ */
+	GREEN,      /* 10 : ì´ˆë¡ */
+	SKY_BLUE,    /* 11 : í•˜ëŠ˜ */
+	RED,      /* 12 : ë¹¨ê°• */
+	VOILET,      /* 13 : ë³´ë¼ */
+	YELLOW,      /* 14 : ë…¸ë‘ */
+	WHITE,      /* 15 : í•˜ì–‘ */
 };
 
 //*********************************
-//Àü¿ªº¯¼ö¼±¾ğ
+//ì „ì—­ë³€ìˆ˜ì„ ì–¸
 //*********************************
 int level;
-int ab_x, ab_y;	//È­¸éÁß ºí·°ÀÌ ³ªÅ¸³ª´Â ÁÂÇ¥ÀÇ Àı´ëÀ§Ä¡
+int ab_x, ab_y;	//í™”ë©´ì¤‘ ë¸”ëŸ­ì´ ë‚˜íƒ€ë‚˜ëŠ” ì¢Œí‘œì˜ ì ˆëŒ€ìœ„ì¹˜
 int block_shape, block_angle, block_x, block_y;
 int next_block_shape;
 int score;
 int lines;
-char total_block[21][14];		//È­¸é¿¡ Ç¥½ÃµÇ´Â ºí·°µé
+char total_block[21][14];		//í™”ë©´ì— í‘œì‹œë˜ëŠ” ë¸”ëŸ­ë“¤
 struct STAGE stage_data[10];
 char block[7][4][4][4] = {
-	//¸·´ë¸ğ¾ç
+	//ë§‰ëŒ€ëª¨ì–‘
 	1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,	1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,	1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,	1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,
 
-	//³×¸ğ¸ğ¾ç
+	//ë„¤ëª¨ëª¨ì–‘
 	1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,	1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,	1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,	1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,
 
-	//'¤Ã' ¸ğ¾ç
+	//'ã…“' ëª¨ì–‘
 	0,1,0,0,1,1,0,0,0,1,0,0,0,0,0,0,	1,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,	1,0,0,0,1,1,0,0,1,0,0,0,0,0,0,0,	0,1,0,0,1,1,1,0,0,0,0,0,0,0,0,0,
 
-	//'¤¡'¸ğ¾ç
+	//'ã„±'ëª¨ì–‘
 	1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,	1,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,	1,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0,	0,0,1,0,1,1,1,0,0,0,0,0,0,0,0,0,
 
-	//'¤¤' ¸ğ¾ç
+	//'ã„´' ëª¨ì–‘
 	1,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,	1,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,	0,1,0,0,0,1,0,0,1,1,0,0,0,0,0,0,	1,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,
 
-	//'Z' ¸ğ¾ç
+	//'Z' ëª¨ì–‘
 	1,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,	0,1,0,0,1,1,0,0,1,0,0,0,0,0,0,0,	1,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,	0,1,0,0,1,1,0,0,1,0,0,0,0,0,0,0,
 
-	//'S' ¸ğ¾ç
+	//'S' ëª¨ì–‘
 	0,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,	1,0,0,0,1,1,0,0,0,1,0,0,0,0,0,0,	0,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,	1,0,0,0,1,1,0,0,0,1,0,0,0,0,0,0
 
 };
 //*********************************
-//ÇÔ¼ö ¼±¾ğ
+//í•¨ìˆ˜ ì„ ì–¸
 //*********************************
-int gotoxy(int x, int y);	//Ä¿¼­¿Å±â±â
-void SetColor(int color);	//»öÇ¥Çö
-int init();					//°¢Á¾º¯¼ö ÃÊ±âÈ­
-int show_cur_block(int shape, int angle, int x, int y);	//ÁøÇàÁßÀÎ ºí·°À» È­¸é¿¡ Ç¥½ÃÇÑ´Ù
-int erase_cur_block(int shape, int angle, int x, int y);	//ºí·° ÁøÇàÀÇ ÀÜ»óÀ» Áö¿ì±â À§ÇÑ ÇÔ¼ö
-int show_total_block();	//½×¿©Á®ÀÖ´Â ºí·°À» È­¸é¿¡ Ç¥½ÃÇÑ´Ù.
+int gotoxy(int x, int y);	//ì»¤ì„œì˜®ê¸°ê¸°
+void SetColor(int color);	//ìƒ‰í‘œí˜„
+int init();					//ê°ì¢…ë³€ìˆ˜ ì´ˆê¸°í™”
+int show_cur_block(int shape, int angle, int x, int y);	//ì§„í–‰ì¤‘ì¸ ë¸”ëŸ­ì„ í™”ë©´ì— í‘œì‹œí•œë‹¤
+int erase_cur_block(int shape, int angle, int x, int y);	//ë¸”ëŸ­ ì§„í–‰ì˜ ì”ìƒì„ ì§€ìš°ê¸° ìœ„í•œ í•¨ìˆ˜
+int show_total_block();	//ìŒ“ì—¬ì ¸ìˆëŠ” ë¸”ëŸ­ì„ í™”ë©´ì— í‘œì‹œí•œë‹¤.
 int show_next_block(int shape);
-int make_new_block();	//return°ªÀ¸·Î blockÀÇ ¸ğ¾ç¹øÈ£¸¦ ¾Ë·ÁÁÜ
-int strike_check(int shape, int angle, int x, int y);	//ºí·°ÀÌ È­¸é ¸Ç ¾Æ·¡¿¡ ºÎ´ÚÃÆ´ÂÁö °Ë»ç ºÎ´ÚÄ¡¸é 1À»¸®ÅÏ ¾Æ´Ï¸é 0¸®ÅÏ
-int merge_block(int shape, int angle, int x, int y);	//ºí·°ÀÌ ¹Ù´Ú¿¡ ´ê¾ÒÀ»¶§ ÁøÇàÁßÀÎ ºí·°°ú ½×¾ÆÁø ºí·°À» ÇÕÄ§
-int block_start(int shape, int* angle, int* x, int* y);	//ºí·°ÀÌ Ã³À½ ³ª¿Ã¶§ À§Ä¡¿Í ¸ğ¾çÀ» ¾Ë·ÁÁÜ
-int move_block(int* shape, int* angle, int* x, int* y, int* next_shape);	//°ÔÀÓ¿À¹ö´Â 1À»¸®ÅÏ ¹Ù´Ú¿¡ ºí·°ÀÌ ´êÀ¸¸é 2¸¦ ¸®ÅÏ
+
+int make_new_block();	//returnê°’ìœ¼ë¡œ blockì˜ ëª¨ì–‘ë²ˆí˜¸ë¥¼ ì•Œë ¤ì¤Œ
+int strike_check(int shape, int angle, int x, int y);	//ë¸”ëŸ­ì´ í™”ë©´ ë§¨ ì•„ë˜ì— ë¶€ë‹¥ì³¤ëŠ”ì§€ ê²€ì‚¬ ë¶€ë‹¥ì¹˜ë©´ 1ì„ë¦¬í„´ ì•„ë‹ˆë©´ 0ë¦¬í„´
+int merge_block(int shape, int angle, int x, int y);	//ë¸”ëŸ­ì´ ë°”ë‹¥ì— ë‹¿ì•˜ì„ë•Œ ì§„í–‰ì¤‘ì¸ ë¸”ëŸ­ê³¼ ìŒ“ì•„ì§„ ë¸”ëŸ­ì„ í•©ì¹¨
+int block_start(int shape, int* angle, int* x, int* y);	//ë¸”ëŸ­ì´ ì²˜ìŒ ë‚˜ì˜¬ë•Œ ìœ„ì¹˜ì™€ ëª¨ì–‘ì„ ì•Œë ¤ì¤Œ
+int move_block(int* shape, int* angle, int* x, int* y, int* next_shape);	//ê²Œì„ì˜¤ë²„ëŠ” 1ì„ë¦¬í„´ ë°”ë‹¥ì— ë¸”ëŸ­ì´ ë‹¿ìœ¼ë©´ 2ë¥¼ ë¦¬í„´
 int rotate_block(int shape, int* angle, int* x, int* y);
+
 int show_gameover();
 int show_gamestat();
 int show_logo();
@@ -108,15 +111,19 @@ int main()
 	show_logo();
 	while (1)
 	{
+		is_gameover = 0; // ì´ˆê¸°í™”í•˜ì§€ ì•Šìœ¼ë©´ ì¬ë„ì „ ì‹œ ë°”ë¡œ gameover ë°œìƒ
 
 		input_data();
 		show_total_block();
+
 		block_shape = make_new_block();
 		next_block_shape = make_new_block();
 		show_next_block(next_block_shape);
+
 		block_start(block_shape, &block_angle, &block_x, &block_y);
 		show_gamestat();
-		for (i = 1; 1; i++)
+
+		for (i = 1;1;i++)
 		{
 			if (_kbhit())
 			{
@@ -126,16 +133,16 @@ int main()
 					keytemp = _getche();
 					switch (keytemp)
 					{
-					case KEY_UP:		//È¸ÀüÇÏ±â
+					case KEY_UP:		//íšŒì „í•˜ê¸°
 
 						if (strike_check(block_shape, (block_angle + 1) % 4, block_x, block_y) == 0)
 						{
 							erase_cur_block(block_shape, block_angle, block_x, block_y);
-							rotate_block(block_shape, &block_angle, &block_x, &block_y);
+							block_angle = (block_angle + 1) % 4;
 							show_cur_block(block_shape, block_angle, block_x, block_y);
 						}
 						break;
-					case KEY_LEFT:		//¿ŞÂÊÀ¸·Î ÀÌµ¿
+					case KEY_LEFT:		//ì™¼ìª½ìœ¼ë¡œ ì´ë™
 						if (block_x > 1)
 						{
 							erase_cur_block(block_shape, block_angle, block_x, block_y);
@@ -146,7 +153,7 @@ int main()
 							show_cur_block(block_shape, block_angle, block_x, block_y);
 						}
 						break;
-					case KEY_RIGHT:		//¿À¸¥ÂÊÀ¸·Î ÀÌµ¿
+					case KEY_RIGHT:		//ì˜¤ë¥¸ìª½ìœ¼ë¡œ ì´ë™
 
 						if (block_x < 14)
 						{
@@ -157,13 +164,13 @@ int main()
 							show_cur_block(block_shape, block_angle, block_x, block_y);
 						}
 						break;
-					case KEY_DOWN:		//¾Æ·¡·Î ÀÌµ¿
+					case KEY_DOWN:		//ì•„ë˜ë¡œ ì´ë™
 						is_gameover = move_block(&block_shape, &block_angle, &block_x, &block_y, &next_block_shape);
 						show_cur_block(block_shape, block_angle, block_x, block_y);
 						break;
 					}
 				}
-				if (keytemp == 32)	//½ºÆäÀÌ½º¹Ù¸¦ ´­·¶À»¶§
+				if (keytemp == 32)	//ìŠ¤í˜ì´ìŠ¤ë°”ë¥¼ ëˆŒë €ì„ë•Œ
 				{
 					while (is_gameover == 0)
 					{
@@ -179,10 +186,13 @@ int main()
 				show_cur_block(block_shape, block_angle, block_x, block_y);
 			}
 
-			if (stage_data[level].clear_line == lines)	//Å¬¸®¾î ½ºÅ×ÀÌÁö
+			if (stage_data[level].clear_line == lines)	//ìŠ¤í…Œì´ì§€ í´ë¦¬ì–´
 			{
 				level++;
 				lines = 0;
+				show_gamestat(); // ì ìˆ˜íŒ ê°±ì‹ 
+				show_total_block(); // ë²½ ìƒ‰ê¹” ê°±ì‹ 
+				show_next_block(next_block_shape); // ì˜¤ë¥¸ìª½ ë°•ìŠ¤ í…Œë‘ë¦¬ ê°±ì‹ 
 			}
 			if (is_gameover == 1)
 			{
@@ -196,6 +206,7 @@ int main()
 			gotoxy(77, 23);
 		}
 		init();
+
 	}
 	return 0;
 }
@@ -204,8 +215,8 @@ int gotoxy(int x, int y)
 {
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	COORD pos;
-	pos.Y = y;
-	pos.X = x;
+	pos.Y = (short)y;
+	pos.X = (short)x;
 	SetConsoleCursorPosition(hConsole, pos);
 	return 0;
 }
@@ -223,9 +234,9 @@ int init()
 	srand((unsigned)time(NULL));
 
 
-	for (i = 0; i < 20; i++)
+	for (i = 0;i < 20;i++)
 	{
-		for (j = 0; j < 14; j++)
+		for (j = 0;j < 14;j++)
 		{
 			if ((j == 0) || (j == 13))
 			{
@@ -237,18 +248,19 @@ int init()
 		}
 	}
 
-	for (j = 0; j < 14; j++)			//È­¸éÀÇ Á¦ÀÏ ¹ØÀÇ ÁÙÀº 1·Î Ã¤¿î´Ù.
+	for (j = 0;j < 14;j++)			//í™”ë©´ì˜ ì œì¼ ë°‘ì˜ ì¤„ì€ 1ë¡œ ì±„ìš´ë‹¤.
 		total_block[20][j] = 1;
 
-	//Àü¿ªº¯¼ö ÃÊ±âÈ­
+	//ì „ì—­ë³€ìˆ˜ ì´ˆê¸°í™”
 	level = 0;
 	lines = 0;
 	ab_x = 5;
 	ab_y = 1;
+	score = 0; // ìŠ¤ì½”ì–´ë¥¼ 0ìœ¼ë¡œ ì´ˆê¸°í™”í•´ì£¼ì§€ ì•Šìœ¼ë©´ ì¬ë„ì „ ì‹œ ì ìˆ˜ê°€ ëˆ„ì ë¨
 
 	stage_data[0].speed = 40;
 	stage_data[0].stick_rate = 20;
-	stage_data[0].clear_line = 20;
+	stage_data[0].clear_line = 2; // í…ŒìŠ¤íŠ¸ìš©
 	stage_data[1].speed = 38;
 	stage_data[1].stick_rate = 18;
 	stage_data[1].clear_line = 20;
@@ -279,12 +291,10 @@ int init()
 	return 0;
 }
 
-int show_cur_block(int shape, int angle, int x, int y)
-{
+int show_cur_block(int shape, int angle, int x, int y) {
 	int i, j;
 
-	switch (shape)
-	{
+	switch (shape) {
 	case 0:
 		SetColor(RED);
 		break;
@@ -308,18 +318,14 @@ int show_cur_block(int shape, int angle, int x, int y)
 		break;
 	}
 
-	for (i = 0; i < 4; i++)
-	{
-		for (j = 0; j < 4; j++)
-		{
+	for (i = 0; i < 4; i++) {
+		for (j = 0; j < 4; j++) {
 			if ((j + y) < 0)
 				continue;
 
-			if (block[shape][angle][j][i] == 1)
-			{
+			if (block[shape][angle][j][i] == 1) {
 				gotoxy((i + x) * 2 + ab_x, j + y + ab_y);
-				printf("¡á");
-
+				printf("â– ");
 			}
 		}
 	}
@@ -328,15 +334,11 @@ int show_cur_block(int shape, int angle, int x, int y)
 	return 0;
 }
 
-int erase_cur_block(int shape, int angle, int x, int y)
-{
+int erase_cur_block(int shape, int angle, int x, int y) {
 	int i, j;
-	for (i = 0; i < 4; i++)
-	{
-		for (j = 0; j < 4; j++)
-		{
-			if (block[shape][angle][j][i] == 1)
-			{
+	for (i = 0; i < 4; i++) {
+		for (j = 0; j < 4; j++) {
+			if (block[shape][angle][j][i] == 1) {
 				gotoxy((i + x) * 2 + ab_x, j + y + ab_y);
 				printf("  ");
 				//break;
@@ -349,15 +351,12 @@ int erase_cur_block(int shape, int angle, int x, int y)
 
 
 
-int show_total_block()
-{
+int show_total_block() {
 	int i, j;
 	SetColor(DARK_GRAY);
-	for (i = 0; i < 21; i++)
-	{
-		for (j = 0; j < 14; j++)
-		{
-			if (j == 0 || j == 13 || i == 20)		//·¹º§¿¡ µû¶ó ¿Üº® »öÀÌ º¯ÇÔ
+	for (i = 0; i < 21; i++) {
+		for (j = 0; j < 14; j++) {
+			if (j == 0 || j == 13 || i == 20)        //ë ˆë²¨ì— ë”°ë¼ ì™¸ë²½ ìƒ‰ì´ ë³€í•¨
 			{
 				SetColor((level % 6) + 1);
 
@@ -366,9 +365,8 @@ int show_total_block()
 				SetColor(DARK_GRAY);
 			}
 			gotoxy((j * 2) + ab_x, i + ab_y);
-			if (total_block[i][j] == 1)
-			{
-				printf("¡á");
+			if (total_block[i][j] == 1) {
+				printf("â– ");
 			}
 			else {
 				printf("  ");
@@ -386,30 +384,28 @@ int make_new_block()
 	int shape;
 	int i;
 	i = rand() % 100;
-	if (i <= stage_data[level].stick_rate)		//¸·´ë±â ³ª¿ÃÈ®·ü °è»ê
-		return 0;							//¸·´ë±â ¸ğ¾çÀ¸·Î ¸®ÅÏ
+	if (i <= stage_data[level].stick_rate)		//ë§‰ëŒ€ê¸° ë‚˜ì˜¬í™•ë¥  ê³„ì‚°
+		return 0;							//ë§‰ëŒ€ê¸° ëª¨ì–‘ìœ¼ë¡œ ë¦¬í„´
 
-	shape = (rand() % 6) + 1;		//shape¿¡´Â 1~6ÀÇ °ªÀÌ µé¾î°¨
+	shape = (rand() % 6) + 1;		//shapeì—ëŠ” 1~6ì˜ ê°’ì´ ë“¤ì–´ê°
 	show_next_block(shape);
 	return shape;
 }
 
 
-int strike_check(int shape, int angle, int x, int y)
-{
+int strike_check(int shape, int angle, int x, int y) {
 	int i, j;
 	int block_dat;
 
-	for (i = 0; i < 4; i++)
-	{
-		for (j = 0; j < 4; j++)
-		{
+	for (i = 0; i < 4; i++) {
+		for (j = 0; j < 4; j++) {
 			if (((x + j) <= 0) || ((x + j) >= 13))
 				block_dat = 1;
 			else
 				block_dat = total_block[y + i][x + j];
 
-			if ((block_dat == 1) && (block[shape][angle][i][j] == 1))																							//ÁÂÃøº®ÀÇ ÁÂÇ¥¸¦ »©±âÀ§ÇÔ
+			if ((block_dat == 1) && (block[shape][angle][i][j] ==
+				1))                                                                                            //ì¢Œì¸¡ë²½ì˜ ì¢Œí‘œë¥¼ ë¹¼ê¸°ìœ„í•¨
 			{
 				return 1;
 			}
@@ -418,13 +414,10 @@ int strike_check(int shape, int angle, int x, int y)
 	return 0;
 }
 
-int merge_block(int shape, int angle, int x, int y)
-{
+int merge_block(int shape, int angle, int x, int y) {
 	int i, j;
-	for (i = 0; i < 4; i++)
-	{
-		for (j = 0; j < 4; j++)
-		{
+	for (i = 0; i < 4; i++) {
+		for (j = 0; j < 4; j++) {
 			if (total_block[y + i][x + j] == 1) continue;
 			total_block[y + i][x + j] |= block[shape][angle][i][j];
 		}
@@ -437,6 +430,7 @@ int merge_block(int shape, int angle, int x, int y)
 
 int block_start(int shape, int* angle, int* x, int* y)
 {
+
 	*x = 5;
 	*y = -3;
 	*angle = 0;
@@ -445,17 +439,18 @@ int block_start(int shape, int* angle, int* x, int* y)
 
 int show_gameover()
 {
+	// system("cls");
 	SetColor(RED);
 	gotoxy(15, 8);
-	printf("¦®¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¯");
+	printf("â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”“");
 	gotoxy(15, 9);
-	printf("¦­**************************¦­");
+	printf("â”ƒ**************************â”ƒ");
 	gotoxy(15, 10);
-	printf("¦­*        GAME OVER       *¦­");
+	printf("â”ƒ*        GAME OVER       *â”ƒ");
 	gotoxy(15, 11);
-	printf("¦­**************************¦­");
+	printf("â”ƒ**************************â”ƒ");
 	gotoxy(15, 12);
-	printf("¦±¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦°");
+	printf("â”—â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”›");
 	fflush(stdin);
 	Sleep(1000);
 
@@ -469,10 +464,10 @@ int move_block(int* shape, int* angle, int* x, int* y, int* next_shape)
 {
 	erase_cur_block(*shape, *angle, *x, *y);
 
-	(*y)++;	//ºí·°À» ÇÑÄ­ ¾Æ·¡·Î ³»¸²
+	(*y)++;	//ë¸”ëŸ­ì„ í•œì¹¸ ì•„ë˜ë¡œ ë‚´ë¦¼
 	if (strike_check(*shape, *angle, *x, *y) == 1)
 	{
-		if (*y < 0)	//°ÔÀÓ¿À¹ö
+		if (*y < 0)	//ê²Œì„ì˜¤ë²„
 		{
 
 			return 1;
@@ -482,15 +477,14 @@ int move_block(int* shape, int* angle, int* x, int* y, int* next_shape)
 		*shape = *next_shape;
 		*next_shape = make_new_block();
 
-		block_start(*shape, angle, x, y);	//angle,x,y´Â Æ÷ÀÎÅÍÀÓ
+		block_start(*shape, angle, x, y);	//angle,x,yëŠ” í¬ì¸í„°ì„
 		show_next_block(*next_shape);
 		return 2;
 	}
 	return 0;
 }
 
-int rotate_block(int shape, int* angle, int* x, int* y)
-{
+int rotate_block(int shape, int* angle, int* x, int* y) {
 	*angle = (*angle + 1) % 4;
 	return 0;
 }
@@ -498,40 +492,42 @@ int rotate_block(int shape, int* angle, int* x, int* y)
 int check_full_line()
 {
 	int i, j, k;
-	for (i = 0; i < 20; i++)
+	for (i = 0;i < 20;i++)
 	{
-		for (j = 1; j < 13; j++)
+		for (j = 1;j < 13;j++)
 		{
 			if (total_block[i][j] == 0)
 				break;
 		}
-		if (j == 13)	//ÇÑÁÙÀÌ ´Ù Ã¤¿öÁ³À½
+		if (j == 13)	//í•œì¤„ì´ ë‹¤ ì±„ì›Œì¡ŒìŒ
 		{
 			lines++;
 			show_total_block();
 			SetColor(BLUE);
 			gotoxy(1 * 2 + ab_x, i + ab_y);
-			for (j = 1; j < 13; j++)
+			for (j = 1;j < 13;j++)
 			{
-				printf("¡à");
+				printf("â–¡");
 				Sleep(10);
 			}
 			gotoxy(1 * 2 + ab_x, i + ab_y);
-			for (j = 1; j < 13; j++)
+			for (j = 1;j < 13;j++)
 			{
 				printf("  ");
 				Sleep(10);
 			}
 
-			for (k = i; k > 0; k--)
+			for (k = i;k > 0;k--)
 			{
-				for (j = 1; j < 13; j++)
+				for (j = 1;j < 13;j++)
 					total_block[k][j] = total_block[k - 1][j];
 			}
-			for (j = 1; j < 13; j++)
+			for (j = 1;j < 13;j++)
 				total_block[0][j] = 0;
 			score += 100 + (level * 10) + (rand() % 10);
 			show_gamestat();
+
+			i--;
 		}
 	}
 	return 0;
@@ -539,24 +535,29 @@ int check_full_line()
 
 int show_next_block(int shape)
 {
-	int i, j;
+	int i, j,k ;
 	SetColor((level + 1) % 6 + 1);
-	for (i = 1; i < 7; i++)
+	for (i = 1;i < 7;i++)
 	{
 		gotoxy(33, i);
-		for (j = 0; j < 6; j++)
+		for (j = 0;j < 6;j++)
 		{
 			if (i == 1 || i == 6 || j == 0 || j == 5)
 			{
-				printf("¡á");
+				printf("â–  ");
 			}
 			else {
 				printf("  ");
 			}
 
 		}
+
+		for (k = 2; k < 6; k++) {
+			gotoxy(35, k);
+			printf("        ");
+		}
 	}
-	show_cur_block(shape, 0, 15, 1);
+	show_cur_block(shape, 0, 16, 1); // 16
 	return 0;
 }
 
@@ -591,25 +592,25 @@ int input_data()
 	int i = 0;
 	SetColor(GRAY);
 	gotoxy(10, 7);
-	printf("¦®¦¬¦¬¦¬¦¬<GAME KEY>¦¬¦¬¦¬¦¬¦¬¦¯");
+	printf("â”â”â”â”â”â”â”â”â”â”<GAME KEY>â”â”â”â”â”â”â”â”â”â”“");
 	Sleep(10);
 	gotoxy(10, 8);
-	printf("¦­ UP   : Rotate Block        ¦­");
+	printf("â”ƒ UP   : Rotate Block        â”ƒ");
 	Sleep(10);
 	gotoxy(10, 9);
-	printf("¦­ DOWN : Move One-Step Down  ¦­");
+	printf("â”ƒ DOWN : Move One-Step Down  â”ƒ");
 	Sleep(10);
 	gotoxy(10, 10);
-	printf("¦­ SPACE: Move Bottom Down    ¦­");
+	printf("â”ƒ SPACE: Move Bottom Down    â”ƒ");
 	Sleep(10);
 	gotoxy(10, 11);
-	printf("¦­ LEFT : Move Left           ¦­");
+	printf("â”ƒ LEFT : Move Left           â”ƒ");
 	Sleep(10);
 	gotoxy(10, 12);
-	printf("¦­ RIGHT: Move Right          ¦­");
+	printf("â”ƒ RIGHT: Move Right          â”ƒ");
 	Sleep(10);
 	gotoxy(10, 13);
-	printf("¦±¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦°");
+	printf("â”—â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”›");
 
 
 	while (i < 1 || i>8)
@@ -617,6 +618,13 @@ int input_data()
 		gotoxy(10, 3);
 		printf("Select Start level[1-8]:       \b\b\b\b\b\b\b");
 		scanf_s("%d", &i);
+
+		/*if (scanf_s("%d", &i) != 1) {
+			while (_kbhit())
+				_getch();
+			continue;
+		}*/
+
 	}
 
 
@@ -628,38 +636,38 @@ int input_data()
 int show_logo()
 {
 	int i, j;
-	gotoxy(13, 3);
-	printf("¦®¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¯");
+	gotoxy(21, 3);
+	printf("â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”“");
 	Sleep(100);
-	gotoxy(13, 4);
-	printf("¦­¡ß¡ß¡ß  ¡ß¡ß¡ß  ¡ß¡ß¡ß   ¡ß¡ß     ¡ß   ¡ß¡ß¡ß ¦­");
+	gotoxy(21, 4);
+	printf("â”ƒâ—†â—†â—†â—†â—† â—†â—†â—†â—† â—†â—†â—†â—†â—† â—†â—†   â—†â—†â—† â—†â—†â—† â”ƒ");
 	Sleep(100);
-	gotoxy(13, 5);
-	printf("¦­  ¡ß    ¡ß        ¡ß     ¡ß ¡ß    ¡ß   ¡ß     ¦­");
+	gotoxy(21, 5);
+	printf("â”ƒ  â—†   â—†      â—†   â—† â—†   â—†  â—†   â”ƒ");
 	Sleep(100);
-	gotoxy(13, 6);
-	printf("¦­  ¡ß    ¡ß¡ß¡ß    ¡ß     ¡ß¡ß     ¡ß     ¡ß   ¦­");
+	gotoxy(21, 6);
+	printf("â”ƒ  â—†   â—†â—†â—†â—†   â—†   â—†â—†    â—†  â—†â—†â—† â”ƒ");
 	Sleep(100);
-	gotoxy(13, 7);
-	printf("¦­  ¡ß    ¡ß        ¡ß     ¡ß ¡ß    ¡ß       ¡ß ¦­");
+	gotoxy(21, 7);
+	printf("â”ƒ  â—†   â—†      â—†   â—† â—†   â—†    â—† â”ƒ");
 	Sleep(100);
-	gotoxy(13, 8);
-	printf("¦­  ¡ß    ¡ß¡ß¡ß    ¡ß     ¡ß  ¡ß   ¡ß   ¡ß¡ß¡ß ¦­");
+	gotoxy(21, 8);
+	printf("â”ƒ  â—†   â—†â—†â—†â—†   â—†   â—†  â—† â—†â—†â—† â—†â—†â—† â”ƒ");
 	Sleep(100);
-	gotoxy(13, 9);
-	printf("¦±¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦°");
+	gotoxy(21, 9);
+	printf("â”—â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”›");
 
-	gotoxy(28, 20);
+	gotoxy(26, 20);
 	printf("Please Press Any Key~!");
 
-	for (i = 0; i >= 0; i++) {
+	for (i = 0;i >= 0;i++) {
 		if (i % 40 == 0)
 		{
 
 
-			for (j = 0; j < 5; j++)
+			for (j = 0;j < 5;j++)
 			{
-				gotoxy(18, 14 + j);
+				gotoxy(17, 14 + j); // 18->17
 				printf("                                                          ");
 
 
