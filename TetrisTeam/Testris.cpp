@@ -138,14 +138,23 @@ int main() {
                 if (keytemp == EXT_KEY) {
                     keytemp = _getche();
                     switch (keytemp) {
-                        case KEY_UP: //회전하기
+                        case KEY_UP: {
+                            //회전하기
+                            const int new_angle = (block_angle + 1) % 4;
+                            int dx = 0;
 
-                            if (strike_check(block_shape, (block_angle + 1) % 4, block_x, block_y) == 0) {
-                                erase_cur_block(block_shape, block_angle, block_x, block_y);
-                                rotate_block(block_shape, &block_angle, &block_x, &block_y);
-                                show_cur_block(block_shape, block_angle, block_x, block_y);
+                            while (dx >= -4) {
+                                if (strike_check(block_shape, new_angle, block_x + dx, block_y) == 0) {
+                                    erase_cur_block(block_shape, block_angle, block_x, block_y);
+                                    block_x += dx;
+                                    rotate_block(block_shape, &block_angle, &block_x, &block_y);
+                                    show_cur_block(block_shape, block_angle, block_x, block_y);
+                                    break;
+                                }
+                                dx--;
                             }
                             break;
+                        }
                         case KEY_LEFT: //왼쪽으로 이동
                             if (block_x > 1) {
                                 erase_cur_block(block_shape, block_angle, block_x, block_y);
