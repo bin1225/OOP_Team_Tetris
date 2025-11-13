@@ -550,20 +550,20 @@ int show_gamestat() {
     static int printed_text = 0;
     SetColor(GRAY);
     if (printed_text == 0) {
-        gotoxy(35, 7);
+        gotoxy(35, 8);
         printf("STAGE");
 
-        gotoxy(35, 9);
+        gotoxy(35, 10);
         printf("SCORE");
 
-        gotoxy(35, 12);
+        gotoxy(35, 13);
         printf("LINES");
     }
-    gotoxy(41, 7);
+    gotoxy(41, 8);
     printf("%d", level + 1);
-    gotoxy(35, 10);
+    gotoxy(35, 11);
     printf("%10d", score);
-    gotoxy(35, 13);
+    gotoxy(35, 14);
     printf("%10d", stage_data[level].clear_line - lines);
     return 0;
 }
