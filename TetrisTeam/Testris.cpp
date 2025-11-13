@@ -199,6 +199,10 @@ int main() {
             {
                 level++;
                 lines = 0;
+                show_gamestat(); // 점수판 갱신
+                show_total_block(); // 벽 색깔 갱신
+                show_next_block(next_block_shape); // 오른쪽 박스 테두리 갱신
+                show_cur_block(block_shape, block_angle, block_x, block_y);
             }
             if (is_gameover == 1) {
                 show_gameover();
