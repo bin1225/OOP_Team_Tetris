@@ -235,6 +235,7 @@ void SetColor(int color) {
 
 int init() {
     int j;
+    cout << "init" << endl;
     srand(static_cast<unsigned>(time(nullptr)));
 
     for (int i = 0; i < 20; i++) {
