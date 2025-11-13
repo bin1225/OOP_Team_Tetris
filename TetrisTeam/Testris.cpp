@@ -559,12 +559,17 @@ int show_gamestat() {
         gotoxy(35, 13);
         printf("LINES");
     }
+
+    int remain_lines = stage_data[level].clear_line - lines;
+    if (remain_lines < 0)
+        remain_lines = 0;
+
     gotoxy(41, 8);
     printf("%d", level + 1);
     gotoxy(35, 11);
     printf("%10d", score);
     gotoxy(35, 14);
-    printf("%10d", stage_data[level].clear_line - lines);
+    printf("%10d", remain_lines);
     return 0;
 }
 
