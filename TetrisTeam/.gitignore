@@ -1,0 +1,43 @@
+# Visual Studio 기본
+.vs/
+*.vcxproj.user
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# 빌드 산출물(무조건-ignore)
+Debug/
+Release/
+x64/
+x86/
+out/
+bin/
+obj/
+
+# 빌드 로그
+*.log
+*.tlog/
+*.tlog
+
+# 임시/캐시
+*.obj
+*.pch
+*.pdb
+*.idb
+*.ipdb
+*.iobj
+
+# 자동 생성 파일
+*.dll
+*.exe
+*.cachefile
+*.ilk
+*.recipe
+
+# 기타 불필요한 파일
+*.aps
+*.ncb
+*.opendb
+*.res
+*.db
