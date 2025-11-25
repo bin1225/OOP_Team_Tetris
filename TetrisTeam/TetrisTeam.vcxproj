@@ -123,10 +123,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Item.cpp" />
+    <ClCompile Include="Ranking.cpp" />
+    <ClCompile Include="Score.cpp" />
+    <ClCompile Include="Test.cpp" />
     <ClCompile Include="Testris.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Item.h" />
+    <ClInclude Include="Ranking.h" />
+    <ClInclude Include="Score.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
