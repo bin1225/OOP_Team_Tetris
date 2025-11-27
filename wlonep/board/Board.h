@@ -15,7 +15,7 @@ public:
     bool checkCollision(const Block& block) const;
     void mergeBlock(const Block& block);
     int clearFullLines();
-    void update();
+    void update() const;
     bool isOccupied(int x, int y) const;
     int getClearedLines() const;
     void reset();

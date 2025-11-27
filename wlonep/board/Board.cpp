@@ -17,35 +17,36 @@ Board::Board() {
 
 bool Board::checkCollision(const Block &block) const {
     const auto& shape = block.getShape();
-    int bx = block.getX();
-    int by = block.getY();
+    const int bx = block.getX();
+    const int by = block.getY();
 
     for (int i = 0; i < 4; ++i) {
         for (int j = 0; j < 4; ++j) {
             if (shape[i][j] != 0) {
-                int boardX = bx + j;
-                int boardY = by + i;
+                const int boardX = bx + j;
+                const int boardY = by + i;
 
                 if (boardX < 0 || boardX >= WIDTH || boardY >= HEIGHT)
-                    return true; // 오른쪽, 왼쪽, 바닥 충돌
+                    return true;
 
                 if (boardY >= 0 && grid[boardY][boardX] != 0)
-                    return true; // 이미 채워진 칸과 충돌
+                    return true;
             }
         }
     }
+    return false;
 }
 
 void Board::mergeBlock(const Block &block) {
     const auto& shape = block.getShape();
-    int bx = block.getX();
-    int by = block.getY();
+    const int bx = block.getX();
+    const int by = block.getY();
 
     for (int i = 0; i < 4; ++i) {
         for (int j = 0; j < 4; ++j) {
             if (shape[i][j] != 0) {
-                int boardX = bx + j;
-                int boardY = by + i;
+                const int boardX = bx + j;
+                const int boardY = by + i;
 
                 if (boardY >= 0 && boardY < HEIGHT && boardX >= 0 && boardX < WIDTH) {
                     grid[boardY][boardX] = shape[i][j];
@@ -84,7 +85,7 @@ int Board::clearFullLines() {
     return linesCleared;
 }
 
-void Board::update() {
+void Board::update() const {
     for (int y = 0; y < HEIGHT; ++y) {
         for (int x = 0; x < WIDTH; ++x) {
             if (grid[y][x] == 1)

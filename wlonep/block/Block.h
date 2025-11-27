@@ -13,8 +13,9 @@ private:
     int color;
     static const std::array<std::array<ShapeMatrix , 4>, 7> SHAPES;
 public:
-    Block();
+    Block() = delete;
     ~Block() = default;
+    Block(int type, int startX, int startY);
     const ShapeMatrix& getShape() const;
     int getX() const;
     int getY() const;
@@ -30,5 +31,7 @@ public:
     void rotateRight();
     void rotateLeft();
 
+    static Block createBlock();
+    Block rotateBlock() const;
 };
 
