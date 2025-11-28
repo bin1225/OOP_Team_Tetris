@@ -13,7 +13,7 @@ void Ranking::load() {
 
     std::ifstream inFile(filename, std::ios::binary);
     if (!inFile.is_open()) {
-        // ÆÄÀÏÀÌ ¾øÀ¸¸é ºó ·©Å·À¸·Î ½ÃÀÛ
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½Å·ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         return;
     }
 
@@ -57,28 +57,28 @@ void Ranking::save() const {
 }
 
 bool Ranking::isTop10(int score) const {
-    // 10°³ ¹Ì¸¸ÀÌ¸é ¹«Á¶°Ç ÁøÀÔ °¡´É
+    // 10ï¿½ï¿½ ï¿½Ì¸ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     if (top10.size() < MAX_ENTRIES) {
         return true;
     }
 
-    // 10À§ Á¡¼öº¸´Ù ³ôÀ¸¸é ÁøÀÔ °¡´É
+    // 10ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     return score > top10.back().score;
 }
 
 void Ranking::add(const std::string& name, int score) {
-    // »õ Ç×¸ñ Ãß°¡
+    // ï¿½ï¿½ ï¿½×¸ï¿½ ï¿½ß°ï¿½
     top10.push_back(Entry(name, score));
 
-    // Á¡¼ö ±âÁØ ³»¸²Â÷¼ø Á¤·Ä
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     std::sort(top10.begin(), top10.end());
 
-    // »óÀ§ 10°³¸¸ À¯Áö
+    // ï¿½ï¿½ï¿½ï¿½ 10ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     if (top10.size() > MAX_ENTRIES) {
         top10.resize(MAX_ENTRIES);
     }
 
-    // ÆÄÀÏ¿¡ ÀÚµ¿ ÀúÀå
+    // ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½Úµï¿½ ï¿½ï¿½ï¿½ï¿½
     save();
 }
 

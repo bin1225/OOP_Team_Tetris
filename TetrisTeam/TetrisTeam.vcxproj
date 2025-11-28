@@ -124,6 +124,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Board.cpp" />
+    <ClCompile Include="ConsoleUI.cpp" />
+    <ClCompile Include="GameController.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="ItemManager.cpp" />
     <ClCompile Include="LineClearItem.cpp" />
@@ -137,11 +139,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Board.h" />
+    <ClInclude Include="ConsoleUI.h" />
+    <ClInclude Include="GameConstants.h" />
+    <ClInclude Include="GameController.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="ItemManager.h" />
     <ClInclude Include="LineClearItem.h" />
     <ClInclude Include="Ranking.h" />
     <ClInclude Include="Score.h" />
+    <ClInclude Include="StructureTypes.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
