@@ -4,6 +4,7 @@
 #include <Windows.h>
 #include <ctime>
 #include <iostream>
+#include <limits>
 
 using namespace std;
 //*********************************
@@ -105,119 +106,263 @@ int block_start(int shape, int *angle, int *x, int *y); //블럭이 처음 나�
 int move_block(int *shape, int *angle, int *x, int *y, int *next_shape); //게임오버는 1을리턴 바닥에 블럭이 닿으면 2를 리턴
 int rotate_block(int shape, int *angle, int *x, int *y);
 
-int show_gameover();
-
+// int show_gameover();
 int show_gamestat();
-
-int show_logo();
-
-int input_data();
-
+// int show_logo();
+// int input_data();
 int check_full_line();
 
+class GameController
+{
+    void showLogo(); // show_logo
+    void showLevelMenu(); // input_data
+    void showGameOver(); // show_gameover
+    void handleInput(int& is_gameover); // 메인 루프에서 키 입력 처리 부분 분리
+
+public:
+    void run(); // 전체 게임 실행 (로고 출력 - 레벨 선택 - 메인 루프)
+};
+
+
+
+//int main() {
+//    int is_gameover = 0;
+//    init();
+//    show_logo();
+//    while (true) {
+//        is_gameover = 0; // 초기화하지 않으면 재도전 시 바로 gameover 발생
+//        input_data();
+//        show_total_block();
+//
+//        block_shape = make_new_block();
+//        next_block_shape = make_new_block();
+//        show_next_block(next_block_shape);
+//
+//        block_start(block_shape, &block_angle, &block_x, &block_y);
+//        show_gamestat();
+//
+//        for (int i = 1; true; i++) {
+//            if (_kbhit()) {
+//                char keytemp = _getche();
+//                if (keytemp == EXT_KEY) {
+//                    keytemp = _getche();
+//                    switch (keytemp) {
+//                        case KEY_UP: {
+//                            //회전하기
+//                            const int new_angle = (block_angle + 1) % 4;
+//                            int dx = 0;
+//
+//                            while (dx >= -4) {
+//                                if (strike_check(block_shape, new_angle, block_x + dx, block_y) == 0) {
+//                                    erase_cur_block(block_shape, block_angle, block_x, block_y);
+//                                    block_x += dx;
+//                                    rotate_block(block_shape, &block_angle, &block_x, &block_y);
+//                                    show_cur_block(block_shape, block_angle, block_x, block_y);
+//                                    break;
+//                                }
+//                                dx--;
+//                            }
+//                            break;
+//                        }
+//                        case KEY_LEFT: //왼쪽으로 이동
+//                            if (block_x > 1) {
+//                                erase_cur_block(block_shape, block_angle, block_x, block_y);
+//                                block_x--;
+//                                if (strike_check(block_shape, block_angle, block_x, block_y) == 1)
+//                                    block_x++;
+//
+//                                show_cur_block(block_shape, block_angle, block_x, block_y);
+//                            }
+//                            break;
+//                        case KEY_RIGHT: //오른쪽으로 이동
+//
+//                            if (block_x < 14) {
+//                                erase_cur_block(block_shape, block_angle, block_x, block_y);
+//                                block_x++;
+//                                if (strike_check(block_shape, block_angle, block_x, block_y) == 1)
+//                                    block_x--;
+//                                show_cur_block(block_shape, block_angle, block_x, block_y);
+//                            }
+//                            break;
+//                        case KEY_DOWN: //아래로 이동
+//                            is_gameover = move_block(&block_shape, &block_angle, &block_x, &block_y, &next_block_shape);
+//                            show_cur_block(block_shape, block_angle, block_x, block_y);
+//                            break;
+//                    }
+//                }
+//                if (keytemp == 32) //스페이스바를 눌렀을때
+//                {
+//                    while (is_gameover == 0) {
+//                        is_gameover = move_block(&block_shape, &block_angle, &block_x, &block_y, &next_block_shape);
+//                    }
+//                    show_cur_block(block_shape, block_angle, block_x, block_y);
+//                }
+//            }
+//            if (i % stage_data[level].speed == 0) {
+//                is_gameover = move_block(&block_shape, &block_angle, &block_x, &block_y, &next_block_shape);
+//
+//                show_cur_block(block_shape, block_angle, block_x, block_y);
+//            }
+//
+//            if (stage_data[level].clear_line <= lines) //클리어 스테이지
+//            {
+//                level++;
+//                lines = 0;
+//                show_gamestat(); // 점수판 갱신
+//                show_total_block(); // 벽 색깔 갱신
+//                show_next_block(next_block_shape); // 오른쪽 박스 테두리 갱신
+//                show_cur_block(block_shape, block_angle, block_x, block_y);
+//            }
+//            if (is_gameover == 1) {
+//                show_gameover();
+//                SetColor(GRAY);
+//                break;
+//            }
+//
+//            gotoxy(77, 23);
+//            Sleep(15);
+//            gotoxy(77, 23);
+//        }
+//        init();
+//    }
+//    return 0;
+//}
 
 int main() {
-    int is_gameover = 0;
+    GameController game;
+    game.run();
+    return 0;
+}
+
+void GameController::run() {
+    // 전역 상태 초기화 및 로고 출력
     init();
-    show_logo();
+    showLogo();
+
+    // 한 판 끝날 때마다 다시 시작하는 무한 루프
     while (true) {
-        is_gameover = 0; // 초기화하지 않으면 재도전 시 바로 gameover 발생
-        input_data();
+        int is_gameover = 0;  // 게임오버 플래그
+
+        // 키 설명 + 시작 레벨 선택 (기존 input_data)
+        showLevelMenu();
+
+        // 초기 보드 출력
         show_total_block();
 
+        // 첫 블록, 다음 블록 생성
         block_shape = make_new_block();
         next_block_shape = make_new_block();
         show_next_block(next_block_shape);
 
+        // 블록 시작 위치 초기화
         block_start(block_shape, &block_angle, &block_x, &block_y);
+
+        // 점수판 표시
         show_gamestat();
 
-        for (int i = 1; true; i++) {
-            if (_kbhit()) {
-                char keytemp = _getche();
-                if (keytemp == EXT_KEY) {
-                    keytemp = _getche();
-                    switch (keytemp) {
-                        case KEY_UP: {
-                            //회전하기
-                            const int new_angle = (block_angle + 1) % 4;
-                            int dx = 0;
+        // 메인 게임 루프 (기존 main() 안의 for 루프)
+        for (int i = 1; ; i++) {
+            // 1) 키 입력 처리 (방향키, 회전, 스페이스바)
+            handleInput(is_gameover);
 
-                            while (dx >= -4) {
-                                if (strike_check(block_shape, new_angle, block_x + dx, block_y) == 0) {
-                                    erase_cur_block(block_shape, block_angle, block_x, block_y);
-                                    block_x += dx;
-                                    rotate_block(block_shape, &block_angle, &block_x, &block_y);
-                                    show_cur_block(block_shape, block_angle, block_x, block_y);
-                                    break;
-                                }
-                                dx--;
-                            }
-                            break;
-                        }
-                        case KEY_LEFT: //왼쪽으로 이동
-                            if (block_x > 1) {
-                                erase_cur_block(block_shape, block_angle, block_x, block_y);
-                                block_x--;
-                                if (strike_check(block_shape, block_angle, block_x, block_y) == 1)
-                                    block_x++;
-
-                                show_cur_block(block_shape, block_angle, block_x, block_y);
-                            }
-                            break;
-                        case KEY_RIGHT: //오른쪽으로 이동
-
-                            if (block_x < 14) {
-                                erase_cur_block(block_shape, block_angle, block_x, block_y);
-                                block_x++;
-                                if (strike_check(block_shape, block_angle, block_x, block_y) == 1)
-                                    block_x--;
-                                show_cur_block(block_shape, block_angle, block_x, block_y);
-                            }
-                            break;
-                        case KEY_DOWN: //아래로 이동
-                            is_gameover = move_block(&block_shape, &block_angle, &block_x, &block_y, &next_block_shape);
-                            show_cur_block(block_shape, block_angle, block_x, block_y);
-                            break;
-                    }
-                }
-                if (keytemp == 32) //스페이스바를 눌렀을때
-                {
-                    while (is_gameover == 0) {
-                        is_gameover = move_block(&block_shape, &block_angle, &block_x, &block_y, &next_block_shape);
-                    }
-                    show_cur_block(block_shape, block_angle, block_x, block_y);
-                }
-            }
+            // 2) 자동으로 한 칸씩 내려가는 타이밍
             if (i % stage_data[level].speed == 0) {
                 is_gameover = move_block(&block_shape, &block_angle, &block_x, &block_y, &next_block_shape);
-
                 show_cur_block(block_shape, block_angle, block_x, block_y);
             }
 
-            if (stage_data[level].clear_line <= lines) //클리어 스테이지
-            {
+            // 3) 스테이지 클리어 체크
+            if (stage_data[level].clear_line <= lines) {
                 level++;
                 lines = 0;
-                show_gamestat(); // 점수판 갱신
-                show_total_block(); // 벽 색깔 갱신
+
+                show_gamestat();        // 점수판 갱신
+                show_total_block();     // 벽 색깔 갱신
                 show_next_block(next_block_shape); // 오른쪽 박스 테두리 갱신
                 show_cur_block(block_shape, block_angle, block_x, block_y);
             }
+
+            // 4) 게임오버 처리
             if (is_gameover == 1) {
-                show_gameover();
+                showGameOver();
                 SetColor(GRAY);
-                break;
+                break;  // 한 판 종료 → while(true) 바깥에서 init() 후 재시작
             }
 
+            // 5) 프레임 간 딜레이
             gotoxy(77, 23);
             Sleep(15);
             gotoxy(77, 23);
         }
+
+        // 한 판 끝난 후 전체 상태 초기화
         init();
     }
-    return 0;
 }
+
+
+void GameController::handleInput(int& is_gameover) {
+    if (_kbhit()) {
+        char keytemp = _getche();
+
+        if (keytemp == EXT_KEY) {
+            keytemp = _getche();
+            switch (keytemp) {
+            case KEY_UP: {
+                // 회전하기 (기존 코드 그대로)
+                const int new_angle = (block_angle + 1) % 4;
+                int dx = 0;
+
+                while (dx >= -4) {
+                    if (strike_check(block_shape, new_angle, block_x + dx, block_y) == 0) {
+                        erase_cur_block(block_shape, block_angle, block_x, block_y);
+                        block_x += dx;
+                        rotate_block(block_shape, &block_angle, &block_x, &block_y);
+                        show_cur_block(block_shape, block_angle, block_x, block_y);
+                        break;
+                    }
+                    dx--;
+                }
+                break;
+            }
+            case KEY_LEFT: // 왼쪽 이동
+                if (block_x > 1) {
+                    erase_cur_block(block_shape, block_angle, block_x, block_y);
+                    block_x--;
+                    if (strike_check(block_shape, block_angle, block_x, block_y) == 1)
+                        block_x++;
+
+                    show_cur_block(block_shape, block_angle, block_x, block_y);
+                }
+                break;
+
+            case KEY_RIGHT: // 오른쪽 이동
+                if (block_x < 14) {
+                    erase_cur_block(block_shape, block_angle, block_x, block_y);
+                    block_x++;
+                    if (strike_check(block_shape, block_angle, block_x, block_y) == 1)
+                        block_x--;
+                    show_cur_block(block_shape, block_angle, block_x, block_y);
+                }
+                break;
+
+            case KEY_DOWN: // 아래로 한 칸 이동
+                is_gameover = move_block(&block_shape, &block_angle, &block_x, &block_y, &next_block_shape);
+                show_cur_block(block_shape, block_angle, block_x, block_y);
+                break;
+            }
+        }
+
+        // 스페이스바(하드 드롭)
+        if (keytemp == 32) {
+            while (is_gameover == 0) {
+                is_gameover = move_block(&block_shape, &block_angle, &block_x, &block_y, &next_block_shape);
+            }
+            show_cur_block(block_shape, block_angle, block_x, block_y);
+        }
+    }
+}
+
 
 int gotoxy(int x, int y) {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -436,7 +581,7 @@ int block_start(int shape, int *angle, int *x, int *y) {
     return 0;
 }
 
-int show_gameover() {
+void GameController::showGameOver() {
     system("cls");
     SetColor(RED);
     gotoxy(15, 8);
@@ -454,9 +599,29 @@ int show_gameover() {
 
     _getche();
     system("cls");
-
-    return 0;
 }
+
+//int show_gameover() {
+//    system("cls");
+//    SetColor(RED);
+//    gotoxy(15, 8);
+//    printf("┏━━━━━━━━━━━━━━━━━━━━━━━━━━┓");
+//    gotoxy(15, 9);
+//    printf("┃**************************┃");
+//    gotoxy(15, 10);
+//    printf("┃*        GAME OVER       *┃");
+//    gotoxy(15, 11);
+//    printf("┃**************************┃");
+//    gotoxy(15, 12);
+//    printf("┗━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
+//    fflush(stdin);
+//    Sleep(1000);
+//
+//    _getche();
+//    system("cls");
+//
+//    return 0;
+//}
 
 int move_block(int* shape, int* angle, int* x, int* y, int* next_shape) {
     erase_cur_block(*shape, *angle, *x, *y);
@@ -573,7 +738,7 @@ int show_gamestat() {
     return 0;
 }
 
-int input_data() {
+void GameController::showLevelMenu() {
     int i = 0;
     SetColor(GRAY);
     gotoxy(10, 7);
@@ -601,19 +766,64 @@ int input_data() {
     while (i < 1 || i > 8) {
         gotoxy(10, 3);
         printf("Select Start level[1-8]:       \b\b\b\b\b\b\b");
-        if (scanf_s("%d", &i) != 1) {
-            while (getchar() != '\n') {}
+        gotoxy(34, 3);
+
+        if (!(cin >> i)) {
+            cin.clear();
+            cin.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
             i = 0;
         }
-    }
 
+        /*if (scanf_s("%d", &i) != 1) {
+            while (getchar() != '\n') {}
+            i = 0;
+        }*/
+    }
 
     level = i - 1;
     system("cls");
-    return 0;
 }
+//int input_data() {
+//    int i = 0;
+//    SetColor(GRAY);
+//    gotoxy(10, 7);
+//    printf("┏━━━━━━━━━<GAME KEY>━━━━━━━━━┓");
+//    Sleep(10);
+//    gotoxy(10, 8);
+//    printf("┃ UP   : Rotate Block        ┃");
+//    Sleep(10);
+//    gotoxy(10, 9);
+//    printf("┃ DOWN : Move One-Step Down  ┃");
+//    Sleep(10);
+//    gotoxy(10, 10);
+//    printf("┃ SPACE: Move Bottom Down    ┃");
+//    Sleep(10);
+//    gotoxy(10, 11);
+//    printf("┃ LEFT : Move Left           ┃");
+//    Sleep(10);
+//    gotoxy(10, 12);
+//    printf("┃ RIGHT: Move Right          ┃");
+//    Sleep(10);
+//    gotoxy(10, 13);
+//    printf("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
+//
+//
+//    while (i < 1 || i > 8) {
+//        gotoxy(10, 3);
+//        printf("Select Start level[1-8]:       \b\b\b\b\b\b\b");
+//        if (scanf_s("%d", &i) != 1) {
+//            while (getchar() != '\n') {}
+//            i = 0;
+//        }
+//    }
+//
+//
+//    level = i - 1;
+//    system("cls");
+//    return 0;
+//}
 
-int show_logo() {
+void GameController::showLogo() {
     gotoxy(21, 3);
     printf("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓");
     Sleep(100);
@@ -658,6 +868,52 @@ int show_logo() {
 
     _getche();
     system("cls");
-
-    return 0;
 }
+//int show_logo() {
+//    gotoxy(21, 3);
+//    printf("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓");
+//    Sleep(100);
+//    gotoxy(21, 4);
+//    printf("┃◆◆◆◆◆ ◆◆◆◆ ◆◆◆◆◆ ◆◆   ◆◆◆ ◆◆◆ ┃");
+//    Sleep(100);
+//    gotoxy(21, 5);
+//    printf("┃  ◆   ◆      ◆   ◆ ◆   ◆  ◆   ┃");
+//    Sleep(100);
+//    gotoxy(21, 6);
+//    printf("┃  ◆   ◆◆◆◆   ◆   ◆◆    ◆  ◆◆◆ ┃");
+//    Sleep(100);
+//    gotoxy(21, 7);
+//    printf("┃  ◆   ◆      ◆   ◆ ◆   ◆    ◆ ┃");
+//    Sleep(100);
+//    gotoxy(21, 8);
+//    printf("┃  ◆   ◆◆◆◆   ◆   ◆  ◆ ◆◆◆ ◆◆◆ ┃");
+//    Sleep(100);
+//    gotoxy(21, 9);
+//    printf("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
+//
+//    gotoxy(26, 20);
+//    printf("Please Press Any Key~!");
+//
+//
+//
+//    for (int i = 0; i >= 0; i++) {
+//        if (i % 40 == 0) {
+//            for (int j = 0; j < 5; j++) {
+//                gotoxy(17, 14 + j); // 18->17
+//                printf("                                                          ");
+//            }
+//            show_cur_block(rand() % 7, rand() % 4, 6, 14);
+//            show_cur_block(rand() % 7, rand() % 4, 12, 14);
+//            show_cur_block(rand() % 7, rand() % 4, 19, 14);
+//            show_cur_block(rand() % 7, rand() % 4, 24, 14);
+//        }
+//        if (_kbhit())
+//            break;
+//        Sleep(30);
+//    }
+//
+//    _getche();
+//    system("cls");
+//
+//    return 0;
+//}
