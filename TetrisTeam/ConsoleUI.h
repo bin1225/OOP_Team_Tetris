@@ -17,12 +17,15 @@ public:
 	void SetColor(int color);
 	void showGameOver(); // show_gameover()
 	void showLogo(); // show_logo()
-	void showLevelMenu(); // input_data()
-	int showGameStat(); // show_gamestat()
-	void handleInput(int& is_gameover); // 메인 루프에서 키 입력 처리 부분 분리
-	int show_next_block(int shape);
-	int show_cur_block(int shape, int angle, int x, int y);
-	int erase_cur_block(int shape, int angle, int x, int y);
-	int show_total_block();
+
+	// 레벨 출력 및 반환
+	int showLevelMenu(); // input_data()
+
+	void showGameStat(int level, int score, int lines, int clear_line); // show_gamestat()
+	
+	void show_next_block(int shape, int level);
+	void show_cur_block(int shape, int angle, int x, int y, int ab_x, int ab_y);
+	void erase_cur_block(int shape, int angle, int x, int y, int ab_x, int ab_y);
+	void show_total_block(char total_block[21][14], int level, int ab_x, int ab_y);
 };
 

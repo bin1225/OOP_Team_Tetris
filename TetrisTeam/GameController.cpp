@@ -5,28 +5,28 @@ GameController::GameController() {}
 void GameController::run() {
     // 전역 상태 초기화 및 로고 출력
     init();
-    showLogo();
+    ui.showLogo();
 
     // 한 판 끝날 때마다 다시 시작하는 무한 루프
     while (true) {
         int is_gameover = 0;  // 게임오버 플래그
 
         // 키 설명 + 시작 레벨 선택 (기존 input_data)
-        showLevelMenu();
+        level = ui.showLevelMenu();
 
         // 초기 보드 출력
-        show_total_block();
+        ui.show_total_block(total_block, level, ab_x, ab_y);
 
         // 첫 블록, 다음 블록 생성
         block_shape = make_new_block();
         next_block_shape = make_new_block();
-        show_next_block(next_block_shape);
+        ui.show_next_block(next_block_shape, level);
 
         // 블록 시작 위치 초기화
         block_start(block_shape, &block_angle, &block_x, &block_y);
 
         // 점수판 표시
-        show_gamestat();
+        ui.show_gamestat(level, score, lines, stage_data[level].clear_line);
 
         // 메인 게임 루프 (기존 main() 안의 for 루프)
         for (int i = 1; ; i++) {
@@ -36,7 +36,7 @@ void GameController::run() {
             // 2) 자동으로 한 칸씩 내려가는 타이밍
             if (i % stage_data[level].speed == 0) {
                 is_gameover = move_block(&block_shape, &block_angle, &block_x, &block_y, &next_block_shape);
-                show_cur_block(block_shape, block_angle, block_x, block_y);
+                ui.show_cur_block(block_shape, block_angle, block_x, block_y, ab_x, ab_y);
             }
 
             // 3) 스테이지 클리어 체크
@@ -44,23 +44,23 @@ void GameController::run() {
                 level++;
                 lines = 0;
 
-                show_gamestat();        // 점수판 갱신
-                show_total_block();     // 벽 색깔 갱신
-                show_next_block(next_block_shape); // 오른쪽 박스 테두리 갱신
-                show_cur_block(block_shape, block_angle, block_x, block_y);
+                ui.showGameStat(level, score, lines, stage_data[level].clear_line);        // 점수판 갱신
+                ui.show_total_block(total_block, level, ab_x, ab_y);     // 벽 색깔 갱신
+                ui.show_next_block(next_block_shape, level); // 오른쪽 박스 테두리 갱신
+                ui.show_cur_block(block_shape, block_angle, block_x, block_y, ab_x, ab_y);
             }
 
             // 4) 게임오버 처리
             if (is_gameover == 1) {
-                showGameOver();
-                SetColor(GRAY);
+                ui.showGameOver();
+                ui.SetColor(GRAY);
                 break;  // 한 판 종료 → while(true) 바깥에서 init() 후 재시작
             }
 
             // 5) 프레임 간 딜레이
-            gotoxy(77, 23);
+            ui.gotoxy(77, 23);
             Sleep(15);
-            gotoxy(77, 23);
+            //gotoxy(77, 23);
         }
 
         // 한 판 끝난 후 전체 상태 초기화
@@ -125,4 +125,66 @@ void GameController::init() {
     stage_data[9].speed = 4;
     stage_data[9].stick_rate = 11;
     stage_data[9].clear_line = 99999;
+}
+
+void GameController::handleInput(int& is_gameover) {
+    if (_kbhit()) {
+        char keytemp = _getche();
+
+        if (keytemp == EXT_KEY) {
+            keytemp = _getche();
+            switch (keytemp) {
+            case KEY_UP: {
+                // 회전하기 (기존 코드 그대로)
+                const int new_angle = (block_angle + 1) % 4;
+                int dx = 0;
+
+                while (dx >= -4) {
+                    if (strike_check(block_shape, new_angle, block_x + dx, block_y) == 0) {
+                        ui.erase_cur_block(block_shape, block_angle, block_x, block_y, ab_x, ab_y);
+                        block_x += dx;
+                        rotate_block(block_shape, &block_angle, &block_x, &block_y);
+                        ui.show_cur_block(block_shape, block_angle, block_x, block_y, ab_x, ab_y);
+                        break;
+                    }
+                    dx--;
+                }
+                break;
+            }
+            case KEY_LEFT: // 왼쪽 이동
+                if (block_x > 1) {
+                    ui.erase_cur_block(block_shape, block_angle, block_x, block_y, ab_x, ab_y);
+                    block_x--;
+                    if (strike_check(block_shape, block_angle, block_x, block_y) == 1)
+                        block_x++;
+
+                    ui.show_cur_block(block_shape, block_angle, block_x, block_y, ab_x, ab_y);
+                }
+                break;
+
+            case KEY_RIGHT: // 오른쪽 이동
+                if (block_x < 14) {
+                    erase_cur_block(block_shape, block_angle, block_x, block_y);
+                    block_x++;
+                    if (strike_check(block_shape, block_angle, block_x, block_y) == 1)
+                        block_x--;
+                    show_cur_block(block_shape, block_angle, block_x, block_y);
+                }
+                break;
+
+            case KEY_DOWN: // 아래로 한 칸 이동
+                is_gameover = move_block(&block_shape, &block_angle, &block_x, &block_y, &next_block_shape);
+                show_cur_block(block_shape, block_angle, block_x, block_y);
+                break;
+            }
+        }
+
+        // 스페이스바(하드 드롭)
+        if (keytemp == 32) {
+            while (is_gameover == 0) {
+                is_gameover = move_block(&block_shape, &block_angle, &block_x, &block_y, &next_block_shape);
+            }
+            show_cur_block(block_shape, block_angle, block_x, block_y);
+        }
+    }
 }

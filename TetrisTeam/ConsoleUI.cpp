@@ -71,10 +71,10 @@ void ConsoleUI::showLogo() {
                 gotoxy(17, 14 + j); // 18->17
                 printf("                                                          ");
             }
-            show_cur_block(rand() % 7, rand() % 4, 6, 14);
-            show_cur_block(rand() % 7, rand() % 4, 12, 14);
-            show_cur_block(rand() % 7, rand() % 4, 19, 14);
-            show_cur_block(rand() % 7, rand() % 4, 24, 14);
+            show_cur_block(rand() % 7, rand() % 4, 6, 14, 5, 1);
+            show_cur_block(rand() % 7, rand() % 4, 12, 14, 5, 1);
+            show_cur_block(rand() % 7, rand() % 4, 19, 14, 5, 1);
+            show_cur_block(rand() % 7, rand() % 4, 24, 14, 5, 1);
         }
         if (_kbhit())
             break;
@@ -85,7 +85,7 @@ void ConsoleUI::showLogo() {
     system("cls");
 }
 
-void ConsoleUI::showLevelMenu() {
+int ConsoleUI::showLevelMenu() {
     int i = 0;
     SetColor(GRAY);
     gotoxy(10, 7);
@@ -126,12 +126,11 @@ void ConsoleUI::showLevelMenu() {
             i = 0;
         }*/
     }
-
-    level = i - 1;
     system("cls");
+    return i - 1;
 }
 
-int ConsoleUI::showGameStat() {
+void ConsoleUI::showGameStat(int level, int score, int lines, int clear_line) {
     static int printed_text = 0;
     SetColor(GRAY);
     if (printed_text == 0) {
@@ -145,7 +144,8 @@ int ConsoleUI::showGameStat() {
         printf("LINES");
     }
 
-    int remain_lines = stage_data[level].clear_line - lines;
+    //int remain_lines = stage_data[level].clear_line - lines;
+    int remain_lines = clear_line - lines;
     if (remain_lines < 0)
         remain_lines = 0;
 
@@ -155,73 +155,10 @@ int ConsoleUI::showGameStat() {
     printf("%10d", score);
     gotoxy(35, 14);
     printf("%10d", remain_lines);
-    return 0;
-}
-
-void ConsoleUI::handleInput(int& is_gameover) {
-    if (_kbhit()) {
-        char keytemp = _getche();
-
-        if (keytemp == EXT_KEY) {
-            keytemp = _getche();
-            switch (keytemp) {
-            case KEY_UP: {
-                // 회전하기 (기존 코드 그대로)
-                const int new_angle = (block_angle + 1) % 4;
-                int dx = 0;
-
-                while (dx >= -4) {
-                    if (strike_check(block_shape, new_angle, block_x + dx, block_y) == 0) {
-                        erase_cur_block(block_shape, block_angle, block_x, block_y);
-                        block_x += dx;
-                        rotate_block(block_shape, &block_angle, &block_x, &block_y);
-                        show_cur_block(block_shape, block_angle, block_x, block_y);
-                        break;
-                    }
-                    dx--;
-                }
-                break;
-            }
-            case KEY_LEFT: // 왼쪽 이동
-                if (block_x > 1) {
-                    erase_cur_block(block_shape, block_angle, block_x, block_y);
-                    block_x--;
-                    if (strike_check(block_shape, block_angle, block_x, block_y) == 1)
-                        block_x++;
-
-                    show_cur_block(block_shape, block_angle, block_x, block_y);
-                }
-                break;
-
-            case KEY_RIGHT: // 오른쪽 이동
-                if (block_x < 14) {
-                    erase_cur_block(block_shape, block_angle, block_x, block_y);
-                    block_x++;
-                    if (strike_check(block_shape, block_angle, block_x, block_y) == 1)
-                        block_x--;
-                    show_cur_block(block_shape, block_angle, block_x, block_y);
-                }
-                break;
-
-            case KEY_DOWN: // 아래로 한 칸 이동
-                is_gameover = move_block(&block_shape, &block_angle, &block_x, &block_y, &next_block_shape);
-                show_cur_block(block_shape, block_angle, block_x, block_y);
-                break;
-            }
-        }
-
-        // 스페이스바(하드 드롭)
-        if (keytemp == 32) {
-            while (is_gameover == 0) {
-                is_gameover = move_block(&block_shape, &block_angle, &block_x, &block_y, &next_block_shape);
-            }
-            show_cur_block(block_shape, block_angle, block_x, block_y);
-        }
-    }
 }
 
 
-int ConsoleUI::show_next_block(int shape) {
+void ConsoleUI::show_next_block(int shape, int level) {
     int i;
     SetColor(BLACK);
     for (i = 0; i < 8; i++) {
@@ -241,11 +178,10 @@ int ConsoleUI::show_next_block(int shape) {
             }
         }
     }
-    show_cur_block(shape, 0, 16, 1);
-    return 0;
+    show_cur_block(shape, 0, 16, 1, 5, 1);
 }
 
-int ConsoleUI::show_cur_block(int shape, int angle, int x, int y) {
+void ConsoleUI::show_cur_block(int shape, int angle, int x, int y, int ab_x, int ab_y) {
     switch (shape) {
     case 0:
         SetColor(RED);
@@ -284,10 +220,9 @@ int ConsoleUI::show_cur_block(int shape, int angle, int x, int y) {
     }
     SetColor(BLACK);
     gotoxy(77, 23);
-    return 0;
 }
 
-int ConsoleUI::erase_cur_block(int shape, int angle, int x, int y) {
+void ConsoleUI::erase_cur_block(int shape, int angle, int x, int y, int ab_x, int ab_y) {
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
             if (block[shape][angle][j][i] == 1) {
@@ -297,10 +232,9 @@ int ConsoleUI::erase_cur_block(int shape, int angle, int x, int y) {
             }
         }
     }
-    return 0;
 }
 
-int ConsoleUI::show_total_block() {
+void ConsoleUI::show_total_block(char total_block[21][14], int level, int ab_x, int ab_y) {
     SetColor(DARK_GRAY);
     for (int i = 0; i < 21; i++) {
         for (int j = 0; j < 14; j++) {
@@ -322,5 +256,4 @@ int ConsoleUI::show_total_block() {
     }
     SetColor(BLACK);
     gotoxy(77, 23);
-    return 0;
 }
