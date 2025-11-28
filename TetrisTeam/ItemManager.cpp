@@ -7,7 +7,7 @@
 ItemManager::ItemManager(float customDropRate)
     : currentItem(nullptr), dropRate(customDropRate) {
 
-    // ·£´ý ½Ãµå ÃÊ±âÈ­ (ÇÁ·Î±×·¥ ½ÃÀÛ ½Ã ÇÑ ¹ø¸¸)
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½Ãµï¿½ ï¿½Ê±ï¿½È­ (ï¿½ï¿½ï¿½Î±×·ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
     static bool seeded = false;
     if (!seeded) {
         srand(static_cast<unsigned int>(time(nullptr)));
@@ -20,16 +20,16 @@ void ItemManager::reset() {
 }
 
 void ItemManager::tryGenerate(int linesCleared) {
-    // ÀÌ¹Ì ¾ÆÀÌÅÛÀ» °¡Áö°í ÀÖÀ¸¸é »ý¼ºÇÏÁö ¾ÊÀ½
+    // ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     if (currentItem != nullptr) return;
 
-    // ¶óÀÎÀ» Å¬¸®¾îÇÏÁö ¾Ê¾ÒÀ¸¸é »ý¼º ½Ãµµ ¾ÈÇÔ
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ãµï¿½ ï¿½ï¿½ï¿½ï¿½
     if (linesCleared <= 0) return;
 
-    // È®·ü °è»ê - Å¬¸®¾îÇÑ ¶óÀÎ ¼ö°¡ ¸¹À»¼ö·Ï È®·ü Áõ°¡
+    // È®ï¿½ï¿½ ï¿½ï¿½ï¿½ - Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     float adjustedRate = dropRate * (1.0f + (linesCleared - 1) * 0.1f);
 
-    // 0.0 ~ 1.0 »çÀÌÀÇ ·£´ý °ª »ý¼º
+    // 0.0 ~ 1.0 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     float randomValue = static_cast<float>(rand()) / RAND_MAX;
 
     if (randomValue < adjustedRate) {
@@ -43,7 +43,7 @@ bool ItemManager::useItem(Board& board, Score& score) {
     bool success = currentItem->use(board, score);
 
     if (success) {
-        currentItem.reset();  // »ç¿ë ÈÄ ¾ÆÀÌÅÛ Á¦°Å
+        currentItem.reset();  // ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     }
 
     return success;
@@ -72,10 +72,10 @@ float ItemManager::getDropRate() const {
 }
 
 std::unique_ptr<Item> ItemManager::createRandomItem() {
-    // ÇöÀç´Â LineClearItem¸¸ Á¸Àç
-    // ÃßÈÄ ´Ù¸¥ ¾ÆÀÌÅÛ Ãß°¡ ½Ã ·£´ý ¼±ÅÃ ·ÎÁ÷ ±¸Çö
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ LineClearItemï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-    // int itemType = rand() % 3;  // 0, 1, 2 Áß ÇÏ³ª
+    // int itemType = rand() % 3;  // 0, 1, 2 ï¿½ï¿½ ï¿½Ï³ï¿½
     // 
     // switch(itemType) {
     //     case 0: return std::make_unique<LineClearItem>();

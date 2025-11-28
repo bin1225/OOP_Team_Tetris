@@ -14,9 +14,9 @@ private:
 
         Entry(const std::string& n = "", int s = 0) : name(n), score(s) {}
 
-        // Á¤·ÄÀ» À§ÇÑ ºñ±³ ¿¬»êÀÚ
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         bool operator<(const Entry& other) const {
-            return score > other.score; // ³»¸²Â÷¼ø Á¤·Ä
+            return score > other.score; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         }
     };
 
@@ -27,10 +27,10 @@ private:
 public:
     Ranking(const std::string& file = "tetris_rank.dat");
 
-    void load();                                    // ÆÄÀÏ¿¡¼­ ·©Å· ·Îµå
-    void save() const;                              // ÆÄÀÏ¿¡ ·©Å· ÀúÀå
+    void load();                                    // ï¿½ï¿½ï¿½Ï¿ï¿½ï¿½ï¿½ ï¿½ï¿½Å· ï¿½Îµï¿½
+    void save() const;                              // ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½Å· ï¿½ï¿½ï¿½ï¿½
 
-    bool isTop10(int score) const;                  // Top10 ÁøÀÔ ¿©ºÎ È®ÀÎ
-    void add(const std::string& name, int score);   // ·©Å· Ãß°¡ ¹× Á¤·Ä
-    void show() const;                              // ÄÜ¼Ö¿¡ ·©Å· Ãâ·Â
+    bool isTop10(int score) const;                  // Top10 ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
+    void add(const std::string& name, int score);   // ï¿½ï¿½Å· ï¿½ß°ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    void show() const;                              // ï¿½Ü¼Ö¿ï¿½ ï¿½ï¿½Å· ï¿½ï¿½ï¿½
 };

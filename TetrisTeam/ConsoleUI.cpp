@@ -1,5 +1,7 @@
 #include "ConsoleUI.h"
 
+extern char block[7][4][4][4];
+
 int ConsoleUI::gotoxy(int x, int y) {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     COORD pos;
