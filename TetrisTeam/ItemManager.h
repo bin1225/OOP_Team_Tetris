@@ -7,25 +7,25 @@
 
 class ItemManager {
 private:
-    std::unique_ptr<Item> currentItem;  // ÇöÀç º¸À¯ ÁßÀÎ ¾ÆÀÌÅÛ
-    float dropRate;                      // ¾ÆÀÌÅÛ »ý¼º È®·ü
+    std::unique_ptr<Item> currentItem;  // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    float dropRate;                      // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
 
     static constexpr float DEFAULT_DROP_RATE = 0.2f;
 
 public:
     ItemManager(float customDropRate = DEFAULT_DROP_RATE);
 
-    void reset();                                    // ¾ÆÀÌÅÛ ÃÊ±âÈ­
-    void tryGenerate(int linesCleared);              // ¾ÆÀÌÅÛ »ý¼º ½Ãµµ
-    bool useItem(Board& board, Score& score);        // ¾ÆÀÌÅÛ »ç¿ë
-    bool hasItem() const;                            // ¾ÆÀÌÅÛ º¸À¯ ¿©ºÎ
+    void reset();                                    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­
+    void tryGenerate(int linesCleared);              // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ãµï¿½
+    bool useItem(Board& board, Score& score);        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+    bool hasItem() const;                            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-    std::string getCurrentItemName() const;          // ÇöÀç ¾ÆÀÌÅÛ ÀÌ¸§
-    std::string getCurrentItemDescription() const;   // ÇöÀç ¾ÆÀÌÅÛ ¼³¸í
+    std::string getCurrentItemName() const;          // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½
+    std::string getCurrentItemDescription() const;   // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
     void setDropRate(float rate);
     float getDropRate() const;
 
 private:
-    std::unique_ptr<Item> createRandomItem();        // ·£´ý ¾ÆÀÌÅÛ »ý¼º
+    std::unique_ptr<Item> createRandomItem();        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 };

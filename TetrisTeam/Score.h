@@ -7,7 +7,7 @@ private:
     int score;
     int combo;
 
-    // Á¡¼ö °è»ê »ó¼ö
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
     static const int BASE_SCORE = 100;
     static const int COMBO_BONUS = 50;
 
@@ -15,8 +15,8 @@ public:
     Score();
 
     void resetCombo();
-    void addLineClear(int lines);   // 1~4ÁÙ Á¦°Å Á¡¼ö °è»ê
-    void addComboBonus();           // ÄÞº¸ º¸³Ê½º Ãß°¡
+    void addLineClear(int lines);   // 1~4ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+    void addComboBonus();           // ï¿½Þºï¿½ ï¿½ï¿½ï¿½Ê½ï¿½ ï¿½ß°ï¿½
     int getScore() const;
     int getCombo() const;
 };
