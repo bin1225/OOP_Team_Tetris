@@ -22,4 +22,5 @@ public:
     void reset();
     vector<vector<int>>& getGrid();
     int removeTopLines(int count);
+    int blastArea(int centerX, int centerY, int radius);
 };

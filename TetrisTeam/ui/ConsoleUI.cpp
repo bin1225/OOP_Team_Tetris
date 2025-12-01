@@ -318,3 +318,33 @@ void ConsoleUI::showItemStatus(const std::string& itemName, const std::string& i
     gotoxy(x + 2, y + 3);
     printf("%s", itemDesc.c_str());
 }
+
+void ConsoleUI::showBlastEffect(int centerX, int centerY, int radius) {
+
+    SetColor(RED);
+
+    for (int r = 1; r <= radius; r++) {
+        for (int y = -r; y <= r; ++y) {
+            for (int x = -r; x <= r; ++x) {
+                if (x * x + y * y <= r * r) {
+                    gotoxy((centerX + x) * 2, centerY + y);
+                    printf("%c", '*');
+                }
+            }
+        }
+
+        Sleep(40);
+
+        // 지우기
+        for (int y = -r; y <= r; ++y) {
+            for (int x = -r; x <= r; ++x) {
+                if (x * x + y * y <= r * r) {
+                    gotoxy((centerX + x) * 2, centerY + y);
+                    printf(" ");
+                }
+            }
+        }
+    }
+
+    SetColor(BLACK);
+}

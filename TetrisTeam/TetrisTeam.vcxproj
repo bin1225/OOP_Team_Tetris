@@ -128,6 +128,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ui\ItemUI.cpp" />
+    <ClCompile Include="module\BlastItem.cpp" />
     <ClCompile Include="core\GameController.cpp" />
     <ClCompile Include="module\Item.cpp" />
     <ClCompile Include="module\ItemManager.cpp" />
@@ -144,6 +146,8 @@
     <None Include=".gitignore" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ui\ItemUI.h" />
+    <ClInclude Include="module\BlastItem.h" />
     <ClInclude Include="core\GameConstants.h" />
     <ClInclude Include="core\GameController.h" />
     <ClInclude Include="core\StructureTypes.h" />
