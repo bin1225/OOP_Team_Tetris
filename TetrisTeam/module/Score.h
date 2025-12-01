@@ -14,7 +14,8 @@ private:
 public:
     Score();
 
-    void resetCombo();
+    void resetScore(); // 게임 재시작용 (점수 및 콤보 초기화)
+    void resetCombo(); // 콤보만 초기화
     void addLineClear(int lines);   // 1~4�� ���� ���� ���
     void addComboBonus();           // �޺� ���ʽ� �߰�
     int getScore() const;

@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <iostream>
 #include "../ui/Block/Block.h"
+#include <Windows.h>
 
 using namespace std;
 
@@ -29,7 +30,7 @@ void GameController::resetGame() {
     board.reset();
 
     lines = 0;
-    score.resetCombo();// 스코어를 0으로 초기화해주지 않으면 재도전 시 점수가 누적됨
+    score.resetScore();// 스코어를 0으로 초기화해주지 않으면 재도전 시 점수가 누적됨
     paused = false;
     gameOver = false;
 
@@ -65,6 +66,11 @@ void GameController::run() {
 					ui.showCurrent(current, ab_x, ab_y);
 
 					if (result == 1) gameOver = true;
+                    if (result == 2) {
+                        ui.showTotal(board.getGrid(), level, ab_x, ab_y);
+                        ui.showNext(next, level);
+                        ui.showGameStat(level, score.getScore(), lines, stage_data[level].clear_line);
+                    }
 				}
 				// 3) 스테이지 클리어 체크
 				if (stage_data[level].clear_line <= lines) {
@@ -122,17 +128,24 @@ void GameController::gameOverProcess() {
 
 void GameController::handleInput() {
     if (_kbhit()) {
-        char keytemp = _getche();
+        char keytemp = _getch();
 
         // ESC 키로 일시정지
         if (keytemp == 27) {
             paused = !paused;
             if (paused) {
-                ui.gotoxy(ab_x + 6, ab_y + 10);
-                printf(" PAUSED ");
+                ui.SetColor(WHITE);
+                ui.gotoxy(ab_x + 9, ab_y + 8);
+                printf("┏━━━━━━━━━━━━┓");
+                ui.gotoxy(ab_x + 9, ab_y + 9);
+                printf("┃   PAUSED   ┃");
+                ui.gotoxy(ab_x + 9, ab_y + 10);
+                printf("┗━━━━━━━━━━━━┛");
             }
             else {
                 ui.showTotal(board.getGrid(), level, ab_x, ab_y);
+                ui.showNext(next, level);
+                ui.showGameStat(level, score.getScore(), lines, stage_data[level].clear_line);
                 ui.showCurrent(current, ab_x, ab_y);
             }
             return;
@@ -141,8 +154,13 @@ void GameController::handleInput() {
         // 일시정지 중이면 조작 불가
         if (paused) return;
 
+        if (keytemp == 32) {
+            hardDrop();
+            return;
+        }
+
         if (keytemp == EXT_KEY) {
-            keytemp = _getche();
+            keytemp = _getch();
             switch (keytemp) {
                 case KEY_UP:
                     rotateCurrentBlock();
@@ -157,8 +175,14 @@ void GameController::handleInput() {
                     return;
 
                 case KEY_DOWN:
-                    moveBlock();
-                    ui.showCurrent(current, ab_x, ab_y);
+                    if (moveBlock() == 2) {
+                        ui.showTotal(board.getGrid(), level, ab_x, ab_y);
+                        ui.showNext(next, level); // 실제 다음 블록으로 UI 갱신
+                        ui.showGameStat(level, score.getScore(), lines, stage_data[level].clear_line);
+                    }
+                    else {
+                        ui.showCurrent(current, ab_x, ab_y);
+                    }
                     return;
             }
         }
@@ -186,6 +210,9 @@ int GameController::moveBlock() {
         next = Block::createBlock();
         return 2;
     }
+
+    ui.eraseCurrent(current, ab_x, ab_y);
+    current = moved;
 
     return 0;
 }
