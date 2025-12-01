@@ -102,6 +102,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>.</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -123,31 +124,33 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Board.cpp" />
-    <ClCompile Include="ConsoleUI.cpp" />
-    <ClCompile Include="GameController.cpp" />
-    <ClCompile Include="Item.cpp" />
-    <ClCompile Include="ItemManager.cpp" />
-    <ClCompile Include="LineClearItem.cpp" />
-    <ClCompile Include="Ranking.cpp" />
-    <ClCompile Include="Score.cpp" />
-    <ClCompile Include="Test.cpp" />
+    <ClCompile Include="core\GameController.cpp" />
+    <ClCompile Include="module\Item.cpp" />
+    <ClCompile Include="module\ItemManager.cpp" />
+    <ClCompile Include="module\LineClearItem.cpp" />
+    <ClCompile Include="module\Ranking.cpp" />
+    <ClCompile Include="module\Score.cpp" />
     <ClCompile Include="Testris.cpp" />
+    <ClCompile Include="ui\block\Block.cpp" />
+    <ClCompile Include="ui\block\shapes.cpp" />
+    <ClCompile Include="ui\board\Board.cpp" />
+    <ClCompile Include="ui\ConsoleUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Board.h" />
-    <ClInclude Include="ConsoleUI.h" />
-    <ClInclude Include="GameConstants.h" />
-    <ClInclude Include="GameController.h" />
-    <ClInclude Include="Item.h" />
-    <ClInclude Include="ItemManager.h" />
-    <ClInclude Include="LineClearItem.h" />
-    <ClInclude Include="Ranking.h" />
-    <ClInclude Include="Score.h" />
-    <ClInclude Include="StructureTypes.h" />
+    <ClInclude Include="core\GameConstants.h" />
+    <ClInclude Include="core\GameController.h" />
+    <ClInclude Include="core\StructureTypes.h" />
+    <ClInclude Include="module\Item.h" />
+    <ClInclude Include="module\ItemManager.h" />
+    <ClInclude Include="module\LineClearItem.h" />
+    <ClInclude Include="module\Ranking.h" />
+    <ClInclude Include="module\Score.h" />
+    <ClInclude Include="ui\block\Block.h" />
+    <ClInclude Include="ui\board\Board.h" />
+    <ClInclude Include="ui\ConsoleUI.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

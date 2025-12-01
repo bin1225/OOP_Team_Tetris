@@ -41,7 +41,8 @@ class GameController
     void moveRight();
     void hardDrop();
 public:
-    GameController() = delete;
+    //GameController() = delete;
+    GameController() {};
     ~GameController() = default;
     void run(); // 전체 게임 실행 (로고 출력 - 레벨 선택 - 메인 루프)
     void init(); // 게임 시작 초기화
