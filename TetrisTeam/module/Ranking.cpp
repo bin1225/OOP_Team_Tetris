@@ -4,6 +4,9 @@
 #include <iostream>
 #include <iomanip>
 
+
+int displayWidth(const std::string& str); 
+
 Ranking::Ranking(const std::string& file) : filename(file) {
     load();
 }
@@ -76,6 +79,8 @@ void Ranking::add(const std::string& name, int score) {
 }
 
 void Ranking::show() const {
+    const int nameColumnWidth = 20;
+
     std::cout << "\n========================================\n";
     std::cout << "           TOP 10 RANKINGS\n";
     std::cout << "========================================\n";
@@ -85,16 +90,40 @@ void Ranking::show() const {
     }
     else {
         std::cout << std::left << std::setw(5) << "Rank"
-            << std::setw(20) << "Name"
+            << std::setw(nameColumnWidth) << "Name"
             << std::right << std::setw(10) << "Score" << "\n";
         std::cout << "----------------------------------------\n";
 
         for (size_t i = 0; i < top10.size(); i++) {
+            int width = displayWidth(top10[i].name);
+            int padding = nameColumnWidth - width;
+
             std::cout << std::left << std::setw(5) << (i + 1)
-                << std::setw(20) << top10[i].name
+                << top10[i].name << std::string(padding > 0 ? padding : 1, ' ')
                 << std::right << std::setw(10) << top10[i].score << "\n";
         }
     }
 
     std::cout << "========================================\n\n";
+}
+
+
+
+int displayWidth(const std::string& str) {
+    int width = 0;
+    for (size_t i = 0; i < str.size();) {
+        unsigned char c = str[i];
+
+        // UTF-8 한글 (1110xxxx → 3바이트)
+        if ((c & 0xF0) == 0xE0) {
+            width += 2;  // 콘솔에서 한글은 2칸
+            i += 3;
+        }
+        // ASCII
+        else {
+            width += 1;
+            i += 1;
+        }
+    }
+    return width;
 }
