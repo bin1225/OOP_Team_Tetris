@@ -10,7 +10,6 @@ LineClearItem::LineClearItem()
 }
 
 bool LineClearItem::use(Board& board, Score& score) {
-    // TODO: Board Ŭ������ removeTopLine() �޼��� ȣ��
     // bool success = board.removeTopLine();
     // if (success) {
     //     score.addItemBonus(50);

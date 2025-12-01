@@ -13,7 +13,6 @@ void Ranking::load() {
 
     std::ifstream inFile(filename, std::ios::binary);
     if (!inFile.is_open()) {
-        // ������ ������ �� ��ŷ���� ����
         return;
     }
 
@@ -57,28 +56,22 @@ void Ranking::save() const {
 }
 
 bool Ranking::isTop10(int score) const {
-    // 10�� �̸��̸� ������ ���� ����
     if (top10.size() < MAX_ENTRIES) {
         return true;
     }
 
-    // 10�� �������� ������ ���� ����
     return score > top10.back().score;
 }
 
 void Ranking::add(const std::string& name, int score) {
-    // �� �׸� �߰�
     top10.push_back(Entry(name, score));
 
-    // ���� ���� �������� ����
     std::sort(top10.begin(), top10.end());
 
-    // ���� 10���� ����
     if (top10.size() > MAX_ENTRIES) {
         top10.resize(MAX_ENTRIES);
     }
 
-    // ���Ͽ� �ڵ� ����
     save();
 }
 

@@ -14,7 +14,6 @@ public:
 
     virtual bool use(Board& board, Score& score) = 0;
 
-    // ������ ���� ��ȯ
     std::string getName() const;
     std::string getDescription() const;
 };

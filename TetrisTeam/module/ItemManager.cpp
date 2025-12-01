@@ -7,7 +7,6 @@
 ItemManager::ItemManager(float customDropRate)
     : currentItem(nullptr), dropRate(customDropRate) {
 
-    // ���� �õ� �ʱ�ȭ (���α׷� ���� �� �� ����)
     static bool seeded = false;
     if (!seeded) {
         srand(static_cast<unsigned int>(time(nullptr)));
@@ -20,16 +19,12 @@ void ItemManager::reset() {
 }
 
 void ItemManager::tryGenerate(int linesCleared) {
-    // �̹� �������� ������ ������ �������� ����
     if (currentItem != nullptr) return;
 
-    // ������ Ŭ�������� �ʾ����� ���� �õ� ����
     if (linesCleared <= 0) return;
 
-    // Ȯ�� ��� - Ŭ������ ���� ���� �������� Ȯ�� ����
     float adjustedRate = dropRate * (1.0f + (linesCleared - 1) * 0.1f);
 
-    // 0.0 ~ 1.0 ������ ���� �� ����
     float randomValue = static_cast<float>(rand()) / RAND_MAX;
 
     if (randomValue < adjustedRate) {
@@ -43,7 +38,7 @@ bool ItemManager::useItem(Board& board, Score& score) {
     bool success = currentItem->use(board, score);
 
     if (success) {
-        currentItem.reset();  // ��� �� ������ ����
+        currentItem.reset();
     }
 
     return success;
@@ -72,8 +67,6 @@ float ItemManager::getDropRate() const {
 }
 
 std::unique_ptr<Item> ItemManager::createRandomItem() {
-    // ����� LineClearItem�� ����
-    // ���� �ٸ� ������ �߰� �� ���� ���� ���� ����
 
     // int itemType = rand() % 3;  // 0, 1, 2 �� �ϳ�
     // 
