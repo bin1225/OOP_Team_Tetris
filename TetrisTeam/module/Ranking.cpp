@@ -11,6 +11,11 @@ Ranking::Ranking(const std::string& file) : filename(file) {
     load();
 }
 
+Ranking::~Ranking()
+{
+    save();
+}
+
 void Ranking::load() {
     top10.clear();
 

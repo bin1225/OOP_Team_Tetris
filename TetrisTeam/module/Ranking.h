@@ -25,7 +25,7 @@ private:
 
 public:
     Ranking(const std::string& file = "tetris_rank.dat");
-
+    ~Ranking();
     void load();
     void save() const; 
 
