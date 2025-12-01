@@ -129,7 +129,6 @@
     <ClCompile Include="LineClearItem.cpp" />
     <ClCompile Include="Ranking.cpp" />
     <ClCompile Include="Score.cpp" />
-    <ClCompile Include="Test.cpp" />
     <ClCompile Include="Testris.cpp" />
   </ItemGroup>
   <ItemGroup>
