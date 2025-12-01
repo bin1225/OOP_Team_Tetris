@@ -4,8 +4,12 @@ Score::Score() : score(0), combo(0) {
 }
 
 // �޺� �ʱ�ȭ
-void Score::resetCombo() {
+void Score::resetScore() {
     score = 0;
+    combo = 0;
+}
+
+void Score::resetCombo() {
     combo = 0;
 }
 
