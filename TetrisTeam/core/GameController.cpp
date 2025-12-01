@@ -202,6 +202,7 @@ int GameController::moveBlock() {
         if (linesCleared > 0) {
             lines += linesCleared;
             score.addLineClear(linesCleared);
+            score.addComboBonus();
         } else {
             score.resetCombo();
         }
@@ -275,6 +276,7 @@ void GameController::hardDrop() {
     if (linesCleared > 0) {
         lines += linesCleared;
         score.addLineClear(linesCleared);
+        score.addComboBonus();
     } else {
         score.resetCombo();
     }
