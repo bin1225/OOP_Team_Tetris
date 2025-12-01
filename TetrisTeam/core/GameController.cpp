@@ -189,3 +189,71 @@ int GameController::moveBlock() {
 
     return 0;
 }
+
+void GameController::rotateCurrentBlock() {
+    Block rotated = current.rotateBlock();
+
+    ui.eraseCurrent(current, ab_x, ab_y);
+
+    int dx = 0;
+    while (dx >= -4) {
+        rotated.setPosition(current.getX() + dx, current.getY());
+
+        if (!board.checkCollision(rotated)) {
+            current = rotated;
+            ui.showCurrent(current, ab_x, ab_y);
+            return;
+        }
+        dx--;
+    }
+
+    ui.showCurrent(current, ab_x, ab_y);
+}
+
+void GameController::moveLeft() {
+    Block moved = current;
+    moved.moveLeft();
+
+    if (!board.checkCollision(moved)) {
+        ui.eraseCurrent(current, ab_x, ab_y);
+        current = moved;
+        ui.showCurrent(current, ab_x, ab_y);
+    }
+}
+
+void GameController::moveRight() {
+    Block moved = current;
+    moved.moveRight();
+
+    if (!board.checkCollision(moved)) {
+        ui.eraseCurrent(current, ab_x, ab_y);
+        current = moved;
+        ui.showCurrent(current, ab_x, ab_y);
+    }
+}
+
+void GameController::hardDrop() {
+    ui.eraseCurrent(current, ab_x, ab_y);
+
+    while (true) {
+        Block dropped = current;
+        dropped.moveDown();
+        if (board.checkCollision(dropped)) break;
+
+        current = dropped;
+    }
+    board.mergeBlock(current);
+    int linesCleared = board.clearFullLines();
+
+    if (linesCleared > 0) {
+        lines += linesCleared;
+        score.addLineClear(linesCleared);
+    } else {
+        score.resetCombo();
+    }
+
+    ui.showTotal(board.getGrid(), level, ab_x, ab_y);
+    current = next;
+    next = Block::createBlock();
+    ui.showNext(next, level);
+}

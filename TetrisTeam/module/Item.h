@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "../board/Board.h"
+#include "../ui/board/Board.h"
 #include "Score.h"
 
 class Item {

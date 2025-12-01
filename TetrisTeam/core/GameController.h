@@ -36,6 +36,10 @@ class GameController
     // 게임 데이터
     struct STAGE stage_data[10];
 
+    void rotateCurrentBlock();
+    void moveLeft();
+    void moveRight();
+    void hardDrop();
 public:
     GameController() = delete;
     ~GameController() = default;
