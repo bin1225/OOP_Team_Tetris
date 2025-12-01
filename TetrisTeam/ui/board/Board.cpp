@@ -118,3 +118,7 @@ void Board::reset() {
     }
     clearedLines = 0;
 }
+
+vector<vector<int>>& Board::getGrid() {
+    return grid;
+}
