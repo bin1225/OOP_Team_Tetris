@@ -13,7 +13,8 @@ private:
     int color;
     static const std::array<std::array<ShapeMatrix , 4>, 7> SHAPES;
 public:
-    Block() = delete;
+    //Block() = delete;
+    Block() {};
     ~Block() = default;
     Block(int type, int startX, int startY);
     const ShapeMatrix& getShape() const;
