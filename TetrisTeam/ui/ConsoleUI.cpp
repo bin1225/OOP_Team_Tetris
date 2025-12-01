@@ -1,0 +1,257 @@
+#include "ConsoleUI.h"
+#include "board/Board.h"
+#include <vector>
+using namespace std;
+
+int ConsoleUI::gotoxy(int x, int y) {
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    COORD pos;
+    if (x < 0) x = -x;
+    if (y < 0) y = -y;
+    pos.Y = static_cast<short>(y);
+    pos.X = static_cast<short>(x);
+    SetConsoleCursorPosition(hConsole, pos);
+    return 0;
+}
+
+void ConsoleUI::SetColor(int color) {
+    static HANDLE std_output_handle = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(std_output_handle, color);
+}
+
+void ConsoleUI::showGameOver() {
+    system("cls");
+    SetColor(RED);
+    gotoxy(15, 8);
+    printf("┏━━━━━━━━━━━━━━━━━━━━━━━━━━┓");
+    gotoxy(15, 9);
+    printf("┃**************************┃");
+    gotoxy(15, 10);
+    printf("┃*        GAME OVER       *┃");
+    gotoxy(15, 11);
+    printf("┃**************************┃");
+    gotoxy(15, 12);
+    printf("┗━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
+    fflush(stdin);
+    Sleep(1000);
+
+    _getche();
+    system("cls");
+}
+
+void ConsoleUI::showLogo() {
+    gotoxy(21, 3);
+    printf("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓");
+    Sleep(100);
+    gotoxy(21, 4);
+    printf("┃◆◆◆◆◆ ◆◆◆◆ ◆◆◆◆◆ ◆◆   ◆◆◆ ◆◆◆ ┃");
+    Sleep(100);
+    gotoxy(21, 5);
+    printf("┃  ◆   ◆      ◆   ◆ ◆   ◆  ◆   ┃");
+    Sleep(100);
+    gotoxy(21, 6);
+    printf("┃  ◆   ◆◆◆◆   ◆   ◆◆    ◆  ◆◆◆ ┃");
+    Sleep(100);
+    gotoxy(21, 7);
+    printf("┃  ◆   ◆      ◆   ◆ ◆   ◆    ◆ ┃");
+    Sleep(100);
+    gotoxy(21, 8);
+    printf("┃  ◆   ◆◆◆◆   ◆   ◆  ◆ ◆◆◆ ◆◆◆ ┃");
+    Sleep(100);
+    gotoxy(21, 9);
+    printf("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
+
+    gotoxy(26, 20);
+    printf("Please Press Any Key~!");
+
+    for (int i = 0; i >= 0; i++) {
+        if (i % 40 == 0) {
+            for (int j = 0; j < 5; j++) {
+                gotoxy(17, 14 + j); // 18->17
+                printf("                                                          ");
+            }
+
+            Block b1 = Block::createBlock();
+            Block b2 = Block::createBlock();
+            Block b3 = Block::createBlock();
+            Block b4 = Block::createBlock();
+
+            b1.setPosition(6, 14);
+            b2.setPosition(12, 14);
+            b3.setPosition(19, 14);
+            b4.setPosition(24, 14);
+
+            showCurrent(b1, 5, 1);
+            showCurrent(b2, 5, 1);
+            showCurrent(b3, 5, 1);
+            showCurrent(b4, 5, 1);
+        }
+        if (_kbhit()) break;
+        Sleep(30);
+    }
+
+    _getche();
+    system("cls");
+}
+
+int ConsoleUI::showLevelMenu() {
+    int i = 0;
+    SetColor(GRAY);
+    gotoxy(10, 7);
+    printf("┏━━━━━━━━━<GAME KEY>━━━━━━━━━┓");
+    Sleep(10);
+    gotoxy(10, 8);
+    printf("┃ UP   : Rotate Block        ┃");
+    Sleep(10);
+    gotoxy(10, 9);
+    printf("┃ DOWN : Move One-Step Down  ┃");
+    Sleep(10);
+    gotoxy(10, 10);
+    printf("┃ SPACE: Move Bottom Down    ┃");
+    Sleep(10);
+    gotoxy(10, 11);
+    printf("┃ LEFT : Move Left           ┃");
+    Sleep(10);
+    gotoxy(10, 12);
+    printf("┃ RIGHT: Move Right          ┃");
+    Sleep(10);
+    gotoxy(10, 13);
+    printf("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
+
+
+    while (i < 1 || i > 8) {
+        gotoxy(10, 3);
+        printf("Select Start level[1-8]:       \b\b\b\b\b\b\b");
+        gotoxy(34, 3);
+
+        if (!(cin >> i)) {
+            cin.clear();
+            cin.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
+            i = 0;
+        }
+    }
+    system("cls");
+    return i - 1;
+}
+
+void ConsoleUI::showGameStat(int level, int score, int lines, int clear_line) {
+    static int printed_text = 0;
+    SetColor(GRAY);
+    if (printed_text == 0) {
+        gotoxy(35, 8);
+        printf("STAGE");
+
+        gotoxy(35, 10);
+        printf("SCORE");
+
+        gotoxy(35, 13);
+        printf("LINES");
+    }
+
+    //int remain_lines = stage_data[level].clear_line - lines;
+    int remain_lines = clear_line - lines;
+    if (remain_lines < 0)
+        remain_lines = 0;
+
+    gotoxy(41, 8);
+    printf("%d", level + 1);
+    gotoxy(35, 11);
+    printf("%10d", score);
+    gotoxy(35, 14);
+    printf("%10d", remain_lines);
+}
+
+
+void ConsoleUI::showNext(const Block& block, int level) {
+    SetColor(BLACK);
+
+    for (int i = 0; i < 8; i++) {
+        gotoxy(33, i);
+        printf("                ");
+    }
+
+    SetColor((level + 1) % 6 + 1);
+
+    for (int i = 1; i < 7; i++) {
+        gotoxy(33, i);
+        for (int j = 0; j < 6; j++) {
+            if (i == 1 || i == 6 || j == 0 || j == 5) {
+                printf("■ ");
+            }
+            else {
+                printf("  ");
+            }
+        }
+    }
+
+    Block b = block;
+    b.setPosition(16, 1);
+    showCurrent(b, 5, 1);
+}
+
+void ConsoleUI::showCurrent(const Block& block, int ab_x, int ab_y) {
+    switch (block.getType()) {
+    case 0: SetColor(RED); break;
+    case 1: SetColor(BLUE); break;
+    case 2: SetColor(SKY_BLUE); break;
+    case 3: SetColor(WHITE); break;
+    case 4: SetColor(YELLOW); break;
+    case 5: SetColor(VIOLET); break;
+    case 6:
+    default: SetColor(GREEN); break;
+    }
+
+    const auto& shape = block.getShape();
+    int x = block.getX();
+    int y = block.getY();
+
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            if (shape[i][j] == 0) continue;
+            if (y + i < 0) continue;
+
+            gotoxy((x + j) * 2 + ab_x, (y + i) + ab_y);
+            printf("■");
+        }
+    }
+    SetColor(BLACK);
+    gotoxy(77, 23);
+}
+
+void ConsoleUI::eraseCurrent(const Block& block, int ab_x, int ab_y) {
+    const auto& shape = block.getShape();
+    int x = block.getX();
+    int y = block.getY();
+
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            if (shape[i][j] == 0) continue;
+            if (y + i < 0) continue;
+
+            gotoxy((x + j) * 2 + ab_x, (y + i) + ab_y);
+            printf("  ");
+        }
+    }
+}
+
+void ConsoleUI::showTotal(const vector<vector<int>>& grid, int level, int ab_x, int ab_y) {
+    SetColor(DARK_GRAY);
+    for (int i = 0; i < 21; i++) {
+        for (int j = 0; j < 14; j++) {
+            if (j == 0 || j == 13 || i == 20) //레벨에 따라 외벽 색이 변함
+                SetColor((level % 6) + 1);
+            else
+                SetColor(DARK_GRAY);
+
+            gotoxy((j * 2) + ab_x, i + ab_y);
+            if (grid[i][j] == 1) {
+                printf("■");
+            }
+            else {
+                printf("  ");
+            }
+        }
+    }
+    SetColor(BLACK);
+    gotoxy(77, 23);
+}

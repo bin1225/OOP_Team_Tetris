@@ -3,17 +3,21 @@
 Score::Score() : score(0), combo(0) {
 }
 
-// ÄÞº¸ ÃÊ±âÈ­
-void Score::resetCombo() {
+// ï¿½Þºï¿½ ï¿½Ê±ï¿½È­
+void Score::resetScore() {
     score = 0;
     combo = 0;
 }
 
-// ¶óÀÎ Å¬¸®¾î Á¡¼ö Ãß°¡
+void Score::resetCombo() {
+    combo = 0;
+}
+
+// ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
 void Score::addLineClear(int lines) {
     if (lines < 1 || lines > 4) return;
     
-    // ¶óÀÎ ¼ö¿¡ µû¸¥ Á¡¼ö ¹èÀ² (1ÁÙ=1x, 2ÁÙ=2.5x, 3ÁÙ=5x, 4ÁÙ=8x)
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (1ï¿½ï¿½=1x, 2ï¿½ï¿½=2.5x, 3ï¿½ï¿½=5x, 4ï¿½ï¿½=8x)
     int multiplier = 0;
     switch(lines) {
         case 1: multiplier = 1; break;
@@ -28,7 +32,7 @@ void Score::addLineClear(int lines) {
 }
 
 
-// ÄÞº¸ º¸³Ê½º Àû¿ë
+// ï¿½Þºï¿½ ï¿½ï¿½ï¿½Ê½ï¿½ ï¿½ï¿½ï¿½ï¿½
 void Score::addComboBonus() {
     int comboBonus = (combo - 1) * COMBO_BONUS;
 	score += comboBonus;
