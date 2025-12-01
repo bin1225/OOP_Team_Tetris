@@ -9,7 +9,7 @@ class ItemManager {
 private:
     std::unique_ptr<Item> currentItem; 
     float dropRate;
-    static constexpr float DEFAULT_DROP_RATE = 0.2f;
+    static constexpr float DEFAULT_DROP_RATE = 0.9f;
 
 public:
     ItemManager(float customDropRate = DEFAULT_DROP_RATE);

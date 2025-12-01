@@ -21,4 +21,5 @@ public:
     int getClearedLines() const;
     void reset();
     vector<vector<int>>& getGrid();
+    int removeTopLines(int count);
 };

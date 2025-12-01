@@ -122,3 +122,44 @@ void Board::reset() {
 vector<vector<int>>& Board::getGrid() {
     return grid;
 }
+
+int Board::removeTopLines(int count) {
+    int removed = 0;
+
+    for (int n = 0; n < count; ++n) {
+        // 1) 제거할 라인 탐색
+        int targetLine = -1;
+
+        for (int y = 0; y < HEIGHT - 1; ++y) {
+            bool hasBlock = false;
+
+            for (int x = 1; x < WIDTH - 1; ++x) {
+                if (grid[y][x] != 0) {
+                    hasBlock = true;
+                    break;
+                }
+            }
+
+            if (hasBlock) {
+                targetLine = y;
+                break;
+            }
+        }
+
+        // 더 이상 지울 라인이 없으면 종료
+        if (targetLine == -1) break;
+
+        // 2) 아래로 한 칸씩 이동
+        for (int row = targetLine; row > 0; --row)
+            for (int col = 1; col < WIDTH - 1; ++col)
+                grid[row][col] = grid[row - 1][col];
+
+        // 3) 맨 윗줄 초기화
+        for (int col = 1; col < WIDTH - 1; ++col)
+            grid[0][col] = 0;
+
+        removed++; // 제거 성공
+    }
+
+    return removed;
+}

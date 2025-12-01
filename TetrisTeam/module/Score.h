@@ -17,6 +17,7 @@ public:
     void resetCombo(); // 콤보만 초기화
     void addLineClear(int lines);  
     void addComboBonus();
+	void addItemBonus(int points);
     int getScore() const;
     int getCombo() const;
 };

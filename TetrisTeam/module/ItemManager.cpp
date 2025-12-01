@@ -3,7 +3,8 @@
 #include "LineClearItem.h"
 #include <cstdlib>
 #include <ctime>
-
+#include <iostream>
+using namespace std;
 ItemManager::ItemManager(float customDropRate)
     : currentItem(nullptr), dropRate(customDropRate) {
 
@@ -21,15 +22,19 @@ void ItemManager::reset() {
 void ItemManager::tryGenerate(int linesCleared) {
     if (currentItem != nullptr) return;
 
-    if (linesCleared <= 0) return;
+    //if (linesCleared <= 0) return;
 
-    float adjustedRate = dropRate * (1.0f + (linesCleared - 1) * 0.1f);
+    //float adjustedRate = dropRate + (linesCleared * 0.05f);
+    ////if (adjustedRate > 0.50f)
+    ////    adjustedRate = 0.50f; // 최대 확률 제한
 
-    float randomValue = static_cast<float>(rand()) / RAND_MAX;
+    //float randomValue = static_cast<float>(rand()) / RAND_MAX;
 
-    if (randomValue < adjustedRate) {
-        currentItem = createRandomItem();
-    }
+    //if (randomValue < adjustedRate) {
+    //    currentItem = createRandomItem();
+    //}
+    cout << " 아이템 생성" << endl;
+    currentItem = createRandomItem();
 }
 
 bool ItemManager::useItem(Board& board, Score& score) {
@@ -68,14 +73,14 @@ float ItemManager::getDropRate() const {
 
 std::unique_ptr<Item> ItemManager::createRandomItem() {
 
-    // int itemType = rand() % 3;  // 0, 1, 2 �� �ϳ�
-    // 
-    // switch(itemType) {
-    //     case 0: return std::make_unique<LineClearItem>();
-    //     case 1: return std::make_unique<BombItem>();
-    //     case 2: return std::make_unique<SlowDownItem>();
-    //     default: return std::make_unique<LineClearItem>();
-    // }
+     int itemType = rand() % 3;  
+     
+     switch(itemType) {
+         case 0: return std::make_unique<LineClearItem>();
+         //case 1: return std::make_unique<BombItem>();
+         //case 2: return std::make_unique<SlowDownItem>();
+         default: return std::make_unique<LineClearItem>();
+     }
 
     return std::make_unique<LineClearItem>();
 }

@@ -255,3 +255,66 @@ void ConsoleUI::showTotal(const vector<vector<int>>& grid, int level, int ab_x, 
     SetColor(BLACK);
     gotoxy(77, 23);
 }
+
+
+void ConsoleUI::showItemStatus(const std::string& itemName, const std::string& itemDesc)
+{
+    const int x = 33;
+    const int y = 17;
+    const int width = 10;  // 내부 공간 기준
+
+    // 색상 설정
+    SetColor(YELLOW);
+
+    // ┌───────────────┐
+    gotoxy(x, y);
+    printf("┌");
+    for (int i = 0; i < width; i++) printf("─");
+    printf("┐");
+
+    // │      ITEM      │  ← 중앙 정렬
+    std::string title = "ITEM";
+    int padding = (width - static_cast<int>(title.length())) / 2;
+
+    gotoxy(x, y + 1);
+    printf("│");
+    for (int i = 0; i < padding; i++) printf(" ");
+    printf("%s", title.c_str());
+    for (int i = 0; i < width - padding - title.length(); i++) printf(" ");
+    printf("│");
+
+    // 두 줄 공백
+    gotoxy(x, y + 2);
+    printf("│");
+    for (int i = 0; i < width; i++) printf(" ");
+    printf("│");
+
+    gotoxy(x, y + 3);
+    printf("│");
+    for (int i = 0; i < width; i++) printf(" ");
+    printf("│");
+
+    // └───────────────┘
+    gotoxy(x, y + 4);
+    printf("└");
+    for (int i = 0; i < width; i++) printf("─");
+    printf("┘");
+
+
+    // 내용 출력
+    if (itemName.empty()) {
+        SetColor(GRAY);
+        gotoxy(x + 2, y + 2);
+        printf("No Item");
+        return;
+    }
+
+    // 아이템 있을 때
+    SetColor(GREEN);
+    gotoxy(x + 2, y + 2);
+    printf("★ %s", itemName.c_str());
+
+    SetColor(WHITE);
+    gotoxy(x + 2, y + 3);
+    printf("%s", itemDesc.c_str());
+}

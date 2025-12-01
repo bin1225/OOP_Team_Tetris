@@ -34,6 +34,10 @@ void Score::addComboBonus() {
 	score += comboBonus;
 }
 
+void Score::addItemBonus(int points){
+	score += points;
+}
+
 int Score::getScore() const {
     return score;
 }

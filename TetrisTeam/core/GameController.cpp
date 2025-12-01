@@ -53,7 +53,7 @@ void GameController::run() {
         ui.showTotal(board.getGrid(), level, ab_x, ab_y);
         ui.showNext(next, level);
         ui.showGameStat(level, score.getScore(), lines, stage_data[level].clear_line);
-
+        ui.showItemStatus(itemManager.getCurrentItemName(), itemManager.getCurrentItemDescription());
 		// 메인 게임 루프 (기존 main() 안의 for 루프)
 		for (int frame = 1; !gameOver; frame++) {
 			// 1) 키 입력 처리 (방향키, 회전, 스페이스바)
@@ -81,6 +81,8 @@ void GameController::run() {
 					ui.showTotal(board.getGrid(), level, ab_x, ab_y);     // 벽 색깔 갱신
 					ui.showNext(next, level); // 오른쪽 박스 테두리 갱신
 					ui.showCurrent(current, ab_x, ab_y);
+					itemManager.reset(); // 아이템 초기화
+                    ui.showItemStatus(itemManager.getCurrentItemName(), itemManager.getCurrentItemDescription());
 				}
 			}
 
@@ -125,7 +127,6 @@ void GameController::gameOverProcess() {
     system("cls");
 }
 
-
 void GameController::handleInput() {
     if (_kbhit()) {
         char keytemp = _getch();
@@ -147,47 +148,77 @@ void GameController::handleInput() {
                 ui.showNext(next, level);
                 ui.showGameStat(level, score.getScore(), lines, stage_data[level].clear_line);
                 ui.showCurrent(current, ab_x, ab_y);
+                ui.showItemStatus(itemManager.getCurrentItemName(), itemManager.getCurrentItemDescription());
             }
             return;
         }
 
-        // 일시정지 중이면 조작 불가
+        // 일시정지 상태는 입력 차단
         if (paused) return;
 
+
+        // ★ A 키: 아이템 사용
+        if (keytemp == KEY_A) {
+            if (itemManager.hasItem()) {
+                bool used = itemManager.useItem(board, score);
+
+                if (used) {
+                    ui.showTotal(board.getGrid(), level, ab_x, ab_y);
+                    ui.showGameStat(level, score.getScore(), lines, stage_data[level].clear_line);
+                    ui.showItemStatus(itemManager.getCurrentItemName(), itemManager.getCurrentItemDescription());
+                }
+            }
+            return;
+        }
+
+
+        // ★ C 키: 테스트용 아이템 생성 (강제 생성)
+        //if (keytemp == KEY_C) {
+        //    if (!itemManager.hasItem()) {
+        //        itemManager.tryGenerate(1);  // 이 함수 없으면 아래 참고
+        //        ui.showItemStatus(itemManager.getCurrentItemName(), itemManager.getCurrentItemDescription());
+        //    }
+        //    return;
+        //}
+
+        // 스페이스바: 하드드랍
         if (keytemp == 32) {
             hardDrop();
             return;
         }
 
+        // 확장키 처리
         if (keytemp == EXT_KEY) {
             keytemp = _getch();
             switch (keytemp) {
-                case KEY_UP:
-                    rotateCurrentBlock();
-                    return;
+            case KEY_UP:
+                rotateCurrentBlock();
+                return;
 
-                case KEY_LEFT:
-                    moveLeft();
-                    return;
+            case KEY_LEFT:
+                moveLeft();
+                return;
 
-                case KEY_RIGHT:
-                    moveRight();
-                    return;
+            case KEY_RIGHT:
+                moveRight();
+                return;
 
-                case KEY_DOWN:
-                    if (moveBlock() == 2) {
-                        ui.showTotal(board.getGrid(), level, ab_x, ab_y);
-                        ui.showNext(next, level); // 실제 다음 블록으로 UI 갱신
-                        ui.showGameStat(level, score.getScore(), lines, stage_data[level].clear_line);
-                    }
-                    else {
-                        ui.showCurrent(current, ab_x, ab_y);
-                    }
-                    return;
+            case KEY_DOWN:
+                if (moveBlock() == 2) {
+                    ui.showTotal(board.getGrid(), level, ab_x, ab_y);
+                    ui.showNext(next, level);
+                    ui.showGameStat(level, score.getScore(), lines, stage_data[level].clear_line);
+                    ui.showItemStatus(itemManager.getCurrentItemName(), itemManager.getCurrentItemDescription());
+                }
+                else {
+                    ui.showCurrent(current, ab_x, ab_y);
+                }
+                return;
             }
         }
     }
 }
+
 
 int GameController::moveBlock() {
     Block moved = current;
@@ -203,6 +234,9 @@ int GameController::moveBlock() {
             lines += linesCleared;
             score.addLineClear(linesCleared);
             score.addComboBonus();
+            itemManager.tryGenerate(linesCleared);
+            ui.showItemStatus(itemManager.getCurrentItemName(), itemManager.getCurrentItemDescription());
+
         } else {
             score.resetCombo();
         }
@@ -277,6 +311,8 @@ void GameController::hardDrop() {
         lines += linesCleared;
         score.addLineClear(linesCleared);
         score.addComboBonus();
+        itemManager.tryGenerate(linesCleared);
+        ui.showItemStatus(itemManager.getCurrentItemName(), itemManager.getCurrentItemDescription());
     } else {
         score.resetCombo();
     }

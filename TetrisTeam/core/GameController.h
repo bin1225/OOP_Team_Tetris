@@ -11,6 +11,7 @@
 #include "../module/Score.h"
 #include "../module/Ranking.h"
 #include "../ui/ConsoleUI.h"
+#include "../module/ItemManager.h"
 
 class GameController
 {
@@ -29,6 +30,7 @@ class GameController
     Block current;
     Block next;
     Ranking ranking;
+    ItemManager itemManager;
 
     bool paused;
     bool gameOver;
