@@ -1,14 +1,13 @@
 #include "ConsoleUI.h"
-
-extern char block[7][4][4][4];
+#include "board/Board.h"
+#include <vector>
+using namespace std;
 
 int ConsoleUI::gotoxy(int x, int y) {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     COORD pos;
-    if (x < 0)
-        x = -x;
-    if (y < 0)
-        y = -y;
+    if (x < 0) x = -x;
+    if (y < 0) y = -y;
     pos.Y = static_cast<short>(y);
     pos.X = static_cast<short>(x);
     SetConsoleCursorPosition(hConsole, pos);
@@ -65,21 +64,29 @@ void ConsoleUI::showLogo() {
     gotoxy(26, 20);
     printf("Please Press Any Key~!");
 
-
-
     for (int i = 0; i >= 0; i++) {
         if (i % 40 == 0) {
             for (int j = 0; j < 5; j++) {
                 gotoxy(17, 14 + j); // 18->17
                 printf("                                                          ");
             }
-            show_cur_block(rand() % 7, rand() % 4, 6, 14, 5, 1);
-            show_cur_block(rand() % 7, rand() % 4, 12, 14, 5, 1);
-            show_cur_block(rand() % 7, rand() % 4, 19, 14, 5, 1);
-            show_cur_block(rand() % 7, rand() % 4, 24, 14, 5, 1);
+
+            Block b1 = Block::createBlock();
+            Block b2 = Block::createBlock();
+            Block b3 = Block::createBlock();
+            Block b4 = Block::createBlock();
+
+            b1.setPosition(6, 14);
+            b2.setPosition(12, 14);
+            b3.setPosition(19, 14);
+            b4.setPosition(24, 14);
+
+            showCurrent(b1, 5, 1);
+            showCurrent(b2, 5, 1);
+            showCurrent(b3, 5, 1);
+            showCurrent(b4, 5, 1);
         }
-        if (_kbhit())
-            break;
+        if (_kbhit()) break;
         Sleep(30);
     }
 
@@ -122,11 +129,6 @@ int ConsoleUI::showLevelMenu() {
             cin.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
             i = 0;
         }
-
-        /*if (scanf_s("%d", &i) != 1) {
-            while (getchar() != '\n') {}
-            i = 0;
-        }*/
     }
     system("cls");
     return i - 1;
@@ -160,16 +162,17 @@ void ConsoleUI::showGameStat(int level, int score, int lines, int clear_line) {
 }
 
 
-void ConsoleUI::show_next_block(int shape, int level) {
-    int i;
+void ConsoleUI::showNext(const Block& block, int level) {
     SetColor(BLACK);
-    for (i = 0; i < 8; i++) {
+
+    for (int i = 0; i < 8; i++) {
         gotoxy(33, i);
         printf("                ");
     }
 
     SetColor((level + 1) % 6 + 1);
-    for (i = 1; i < 7; i++) {
+
+    for (int i = 1; i < 7; i++) {
         gotoxy(33, i);
         for (int j = 0; j < 6; j++) {
             if (i == 1 || i == 6 || j == 0 || j == 5) {
@@ -180,75 +183,68 @@ void ConsoleUI::show_next_block(int shape, int level) {
             }
         }
     }
-    show_cur_block(shape, 0, 16, 1, 5, 1);
+
+    Block b = block;
+    b.setPosition(16, 1);
+    showCurrent(b, 5, 1);
 }
 
-void ConsoleUI::show_cur_block(int shape, int angle, int x, int y, int ab_x, int ab_y) {
-    switch (shape) {
-    case 0:
-        SetColor(RED);
-        break;
-    case 1:
-        SetColor(BLUE);
-        break;
-    case 2:
-        SetColor(SKY_BLUE);
-        break;
-    case 3:
-        SetColor(WHITE);
-        break;
-    case 4:
-        SetColor(YELLOW);
-        break;
-    case 5:
-        SetColor(VIOLET);
-        break;
+void ConsoleUI::showCurrent(const Block& block, int ab_x, int ab_y) {
+    switch (block.getType()) {
+    case 0: SetColor(RED); break;
+    case 1: SetColor(BLUE); break;
+    case 2: SetColor(SKY_BLUE); break;
+    case 3: SetColor(WHITE); break;
+    case 4: SetColor(YELLOW); break;
+    case 5: SetColor(VIOLET); break;
     case 6:
-    default:
-        SetColor(GREEN);
-        break;
+    default: SetColor(GREEN); break;
     }
+
+    const auto& shape = block.getShape();
+    int x = block.getX();
+    int y = block.getY();
 
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
-            if (j + y < 0)
-                continue;
+            if (shape[i][j] == 0) continue;
+            if (y + i < 0) continue;
 
-            if (block[shape][angle][j][i] == 1) {
-                gotoxy((i + x) * 2 + ab_x, j + y + ab_y);
-                printf("■");
-            }
+            gotoxy((x + j) * 2 + ab_x, (y + i) + ab_y);
+            printf("■");
         }
     }
     SetColor(BLACK);
     gotoxy(77, 23);
 }
 
-void ConsoleUI::erase_cur_block(int shape, int angle, int x, int y, int ab_x, int ab_y) {
+void ConsoleUI::eraseCurrent(const Block& block, int ab_x, int ab_y) {
+    const auto& shape = block.getShape();
+    int x = block.getX();
+    int y = block.getY();
+
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
-            if (block[shape][angle][j][i] == 1) {
-                gotoxy((i + x) * 2 + ab_x, j + y + ab_y);
-                printf("  ");
-                //break;
-            }
+            if (shape[i][j] == 0) continue;
+            if (y + i < 0) continue;
+
+            gotoxy((x + j) * 2 + ab_x, (y + i) + ab_y);
+            printf("  ");
         }
     }
 }
 
-void ConsoleUI::show_total_block(char total_block[21][14], int level, int ab_x, int ab_y) {
+void ConsoleUI::showTotal(const vector<vector<int>>& grid, int level, int ab_x, int ab_y) {
     SetColor(DARK_GRAY);
     for (int i = 0; i < 21; i++) {
         for (int j = 0; j < 14; j++) {
             if (j == 0 || j == 13 || i == 20) //레벨에 따라 외벽 색이 변함
-            {
                 SetColor((level % 6) + 1);
-            }
-            else {
+            else
                 SetColor(DARK_GRAY);
-            }
+
             gotoxy((j * 2) + ab_x, i + ab_y);
-            if (total_block[i][j] == 1) {
+            if (grid[i][j] == 1) {
                 printf("■");
             }
             else {

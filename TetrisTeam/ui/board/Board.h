@@ -1,13 +1,14 @@
 #pragma once
 #include "../block/Block.h"
 #include <vector>
+using std::vector;
 
 class Board {
 public:
     static constexpr int WIDTH = 14;
     static constexpr int HEIGHT = 21;
 private:
-    std::vector<std::vector<int>> grid;
+    vector<vector<int>> grid;
     int clearedLines = 0;
 public:
     Board();
@@ -19,4 +20,5 @@ public:
     bool isOccupied(int x, int y) const;
     int getClearedLines() const;
     void reset();
+    vector<vector<int>>& getGrid();
 };

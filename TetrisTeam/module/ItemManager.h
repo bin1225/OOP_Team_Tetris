@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 #include <vector>
-#include "Board.h"
+#include "../ui/board/Board.h"
 #include "Score.h"
 #include "Item.h"
 
