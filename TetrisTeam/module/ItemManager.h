@@ -16,7 +16,7 @@ public:
 
     void reset(); 
     void tryGenerate(int linesCleared); 
-    bool useItem(Board& board, Score& score);
+    bool useItem(Board& board, Score& score, Block& block);
     bool hasItem() const;
 
     std::string getCurrentItemName() const;

@@ -1,6 +1,7 @@
 #include "ItemManager.h"
 #include "Item.h"
 #include "LineClearItem.h"
+#include "BlastItem.h"
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
@@ -37,10 +38,10 @@ void ItemManager::tryGenerate(int linesCleared) {
     currentItem = createRandomItem();
 }
 
-bool ItemManager::useItem(Board& board, Score& score) {
+bool ItemManager::useItem(Board& board, Score& score, Block& block) {
     if (!currentItem) return false;
 
-    bool success = currentItem->use(board, score);
+    bool success = currentItem->use(board, score, block);
 
     if (success) {
         currentItem.reset();
@@ -77,9 +78,9 @@ std::unique_ptr<Item> ItemManager::createRandomItem() {
      
      switch(itemType) {
          case 0: return std::make_unique<LineClearItem>();
-         //case 1: return std::make_unique<BombItem>();
+         case 1: return std::make_unique<BlastItem>();
          //case 2: return std::make_unique<SlowDownItem>();
-         default: return std::make_unique<LineClearItem>();
+         default: return std::make_unique<BlastItem>();
      }
 
     return std::make_unique<LineClearItem>();

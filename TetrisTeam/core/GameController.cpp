@@ -160,7 +160,7 @@ void GameController::handleInput() {
         // ★ A 키: 아이템 사용
         if (keytemp == KEY_A) {
             if (itemManager.hasItem()) {
-                bool used = itemManager.useItem(board, score);
+                bool used = itemManager.useItem(board, score, current);
 
                 if (used) {
                     ui.showTotal(board.getGrid(), level, ab_x, ab_y);
@@ -173,13 +173,13 @@ void GameController::handleInput() {
 
 
         // ★ C 키: 테스트용 아이템 생성 (강제 생성)
-        //if (keytemp == KEY_C) {
-        //    if (!itemManager.hasItem()) {
-        //        itemManager.tryGenerate(1);  // 이 함수 없으면 아래 참고
-        //        ui.showItemStatus(itemManager.getCurrentItemName(), itemManager.getCurrentItemDescription());
-        //    }
-        //    return;
-        //}
+        if (keytemp == KEY_C) {
+            if (!itemManager.hasItem()) {
+                itemManager.tryGenerate(1);  // 이 함수 없으면 아래 참고
+                ui.showItemStatus(itemManager.getCurrentItemName(), itemManager.getCurrentItemDescription());
+            }
+            return;
+        }
 
         // 스페이스바: 하드드랍
         if (keytemp == 32) {
