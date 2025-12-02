@@ -17,6 +17,7 @@ class ConsoleUI
 public:
 	int gotoxy(int x, int y);
 	void SetColor(int color);
+	void setCursorVisible(bool visible);
 	void showGameOver();
 	void showLogo();
 

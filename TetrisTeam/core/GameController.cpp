@@ -43,6 +43,7 @@ void GameController::run() {
     // 전역 상태 초기화 및 로고 출력
     init();
     ui.showLogo();
+    ui.setCursorVisible(false);
 
     while (true) {
         // 키 설명 + 시작 레벨 선택 (기존 input_data)
@@ -113,8 +114,12 @@ void GameController::gameOverProcess() {
         ui.gotoxy(10, 7);
         cout << "이름을 입력하세요: ";
 
+        ui.setCursorVisible(true);
+
         string name;
         cin >> name;
+
+        ui.setCursorVisible(false);
 
         ranking.add(name, finalScore);
     }

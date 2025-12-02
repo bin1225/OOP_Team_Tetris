@@ -19,8 +19,17 @@ void ConsoleUI::SetColor(int color) {
     SetConsoleTextAttribute(std_output_handle, color);
 }
 
+void ConsoleUI::setCursorVisible(bool visible) {
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_CURSOR_INFO cursorInfo;
+    GetConsoleCursorInfo(hConsole, &cursorInfo);
+    cursorInfo.bVisible = visible; // true: 보이게, false: 안보이게
+    SetConsoleCursorInfo(hConsole, &cursorInfo);
+}
+
 void ConsoleUI::showGameOver() {
     system("cls");
+    setCursorVisible(false);
     SetColor(RED);
     gotoxy(15, 8);
     printf("┏━━━━━━━━━━━━━━━━━━━━━━━━━━┓");
@@ -40,6 +49,7 @@ void ConsoleUI::showGameOver() {
 }
 
 void ConsoleUI::showLogo() {
+    setCursorVisible(false);
     gotoxy(21, 3);
     printf("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓");
     Sleep(100);
@@ -96,6 +106,7 @@ void ConsoleUI::showLogo() {
 
 int ConsoleUI::showLevelMenu() {
     int i = 0;
+    setCursorVisible(false);
     SetColor(GRAY);
     gotoxy(10, 7);
     printf("┏━━━━━━━━━<GAME KEY>━━━━━━━━━┓");
@@ -118,7 +129,7 @@ int ConsoleUI::showLevelMenu() {
     gotoxy(10, 13);
     printf("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
 
-
+    setCursorVisible(true);
     while (i < 1 || i > 8) {
         gotoxy(10, 3);
         printf("Select Start level[1-8]:       \b\b\b\b\b\b\b");
@@ -130,6 +141,7 @@ int ConsoleUI::showLevelMenu() {
             i = 0;
         }
     }
+    setCursorVisible(false);
     system("cls");
     return i - 1;
 }
