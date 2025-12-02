@@ -1,7 +1,7 @@
 #include "ItemUI.h"
 #include <Windows.h>
 #include <thread>
-
+#include "../ui/board/Board.h"
 
 void ItemUI::SetColor(int color) {
     static HANDLE std_output_handle = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -19,6 +19,7 @@ int ItemUI::gotoxy(int x, int y) {
     return 0;
 }
 
+
 void ItemUI::flashArea(int x, int y, int radius)
 {
     // 반짝이는 효과 3번 반복
@@ -30,6 +31,10 @@ void ItemUI::flashArea(int x, int y, int radius)
 
                 int px = x + dx;
                 int py = y + dy;
+
+                // 보드 내부(벽/바닥 제외)만 적용
+                if (px <= 0 || px >= Board::WIDTH - 1) continue;
+                if (py < 0 || py >= Board::HEIGHT - 1) continue;
 
                 if (dx * dx + dy * dy <= radius * radius) {
                     gotoxy(px * 2 + 5, py + 1);
@@ -47,6 +52,10 @@ void ItemUI::flashArea(int x, int y, int radius)
                 int px = x + dx;
                 int py = y + dy;
 
+                // 보드 내부 범위 체크 동일하게
+                if (px <= 0 || px >= Board::WIDTH - 1) continue;
+                if (py < 0 || py >= Board::HEIGHT - 1) continue;
+
                 if (dx * dx + dy * dy <= radius * radius) {
                     gotoxy(px * 2 + 5, py + 1);
                     printf("  ");
@@ -57,24 +66,27 @@ void ItemUI::flashArea(int x, int y, int radius)
     }
 }
 
-
 void ItemUI::highlightLine(int row)
 {
+    // 보드 내부 라인만 처리 (바닥 제외)
+    if (row < 0 || row >= Board::HEIGHT - 1) return;
+
     // 깜빡이면서 라인 제거 효과
     for (int i = 0; i < 3; i++)
     {
         SetColor(YELLOW);
-        for (int col = 1; col < 13; col++) {
+        for (int col = 1; col < Board::WIDTH - 1; col++) {
             gotoxy(col * 2 + 5, row + 1);
             printf("■■");
         }
         Sleep(80);
 
         SetColor(BLACK);
-        for (int col = 1; col < 13; col++) {
+        for (int col = 1; col < Board::WIDTH - 1; col++) {
             gotoxy(col * 2 + 5, row + 1);
             printf("  ");
         }
         Sleep(50);
     }
 }
+
