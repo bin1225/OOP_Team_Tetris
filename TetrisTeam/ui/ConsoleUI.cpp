@@ -1,5 +1,7 @@
 #include "ConsoleUI.h"
 #include "board/Board.h"
+#include <iostream>
+#include <string>
 #include <vector>
 using namespace std;
 
@@ -106,6 +108,8 @@ void ConsoleUI::showLogo() {
 
 int ConsoleUI::showLevelMenu() {
     int i = 0;
+    string input;
+
     setCursorVisible(false);
     SetColor(GRAY);
     gotoxy(10, 7);
@@ -130,20 +134,26 @@ int ConsoleUI::showLevelMenu() {
     printf("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
 
     setCursorVisible(true);
-    while (i < 1 || i > 8) {
+    while (true) {
         gotoxy(10, 3);
+        SetColor(WHITE);
         printf("Select Start level[1-8]:       \b\b\b\b\b\b\b");
         gotoxy(34, 3);
 
-        if (!(cin >> i)) {
-            cin.clear();
-            cin.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
-            i = 0;
+        getline(cin, input);
+
+        if (input.length() == 1 && input[0] >= '1' && input[0] <= '8') {
+            setCursorVisible(false);
+            system("cls");
+            return (input[0] - '0') - 1;
+        }
+
+        // 잘못된 입력 지우기
+        gotoxy(34, 3);
+        for (size_t k = 0; k < input.length(); ++k) {
+            printf(" ");
         }
     }
-    setCursorVisible(false);
-    system("cls");
-    return i - 1;
 }
 
 void ConsoleUI::showGameStat(int level, int score, int lines, int clear_line) {
