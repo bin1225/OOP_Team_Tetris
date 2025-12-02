@@ -1,5 +1,7 @@
 #include "ConsoleUI.h"
 #include "board/Board.h"
+#include <iostream>
+#include <string>
 #include <vector>
 using namespace std;
 
@@ -19,8 +21,17 @@ void ConsoleUI::SetColor(int color) {
     SetConsoleTextAttribute(std_output_handle, color);
 }
 
+void ConsoleUI::setCursorVisible(bool visible) {
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_CURSOR_INFO cursorInfo;
+    GetConsoleCursorInfo(hConsole, &cursorInfo);
+    cursorInfo.bVisible = visible; // true: 보이게, false: 안보이게
+    SetConsoleCursorInfo(hConsole, &cursorInfo);
+}
+
 void ConsoleUI::showGameOver() {
     system("cls");
+    setCursorVisible(false);
     SetColor(RED);
     gotoxy(15, 8);
     printf("┏━━━━━━━━━━━━━━━━━━━━━━━━━━┓");
@@ -35,11 +46,12 @@ void ConsoleUI::showGameOver() {
     fflush(stdin);
     Sleep(1000);
 
-    _getche();
+    waitAnyKeyNoEcho();
     system("cls");
 }
 
 void ConsoleUI::showLogo() {
+    setCursorVisible(false);
     gotoxy(21, 3);
     printf("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓");
     Sleep(100);
@@ -86,16 +98,29 @@ void ConsoleUI::showLogo() {
             showCurrent(b3, 5, 1);
             showCurrent(b4, 5, 1);
         }
-        if (_kbhit()) break;
+        if (_kbhit()) {
+            int ch = _getch();
+            Sleep(10);
+            while (_kbhit()) {
+                _getch();
+            }
+            break;
+        }
         Sleep(30);
     }
-
-    _getche();
     system("cls");
 }
 
 int ConsoleUI::showLevelMenu() {
     int i = 0;
+    string input;
+    // 랭킹 접속을 위한 키워드 모음
+    vector<string> rankKeyWords{
+        "rank", "Rank", "RANK",
+        "ranking", "Ranking", "RANKING"
+    };
+
+    setCursorVisible(false);
     SetColor(GRAY);
     gotoxy(10, 7);
     printf("┏━━━━━━━━━<GAME KEY>━━━━━━━━━┓");
@@ -118,20 +143,38 @@ int ConsoleUI::showLevelMenu() {
     gotoxy(10, 13);
     printf("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
 
+    SetColor(YELLOW);
+    gotoxy(10, 4);
+    printf("Type 'rank' to view Top 10");
 
-    while (i < 1 || i > 8) {
+    setCursorVisible(true);
+    while (true) {
         gotoxy(10, 3);
+        SetColor(WHITE);
         printf("Select Start level[1-8]:       \b\b\b\b\b\b\b");
         gotoxy(34, 3);
 
-        if (!(cin >> i)) {
-            cin.clear();
-            cin.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
-            i = 0;
+        getline(cin, input);
+
+        for (const string& keyword : rankKeyWords) {
+            if (input == keyword) {
+                system("cls");
+                return 99; // 랭킹 조회 출력값
+            }
+        }
+
+        if (input.length() == 1 && input[0] >= '1' && input[0] <= '8') {
+            setCursorVisible(false);
+            system("cls");
+            return (input[0] - '0') - 1;
+        }
+
+        // 잘못된 입력 지우기
+        gotoxy(34, 3);
+        for (size_t k = 0; k < input.length(); ++k) {
+            printf(" ");
         }
     }
-    system("cls");
-    return i - 1;
 }
 
 void ConsoleUI::showGameStat(int level, int score, int lines, int clear_line) {
@@ -347,4 +390,28 @@ void ConsoleUI::showBlastEffect(int centerX, int centerY, int radius) {
     }
 
     SetColor(BLACK);
+}
+
+void ConsoleUI::clearPauseLogo(int ab_x, int ab_y)
+{
+    SetColor(BLACK);
+
+    for (int dy = 0; dy < 3; ++dy) {
+        gotoxy(ab_x + 9, ab_y + 8 + dy);
+        printf("              ");
+    }
+}
+
+void ConsoleUI::waitAnyKeyNoEcho()
+{
+    setCursorVisible(false);
+
+    while (_kbhit()) {
+        _getch();
+    }
+    int ch = _getch();
+    Sleep(10);
+    while (_kbhit()) {
+        _getch();
+    }
 }

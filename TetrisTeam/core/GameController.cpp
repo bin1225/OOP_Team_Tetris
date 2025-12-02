@@ -43,10 +43,27 @@ void GameController::run() {
     // 전역 상태 초기화 및 로고 출력
     init();
     ui.showLogo();
+    ui.setCursorVisible(false);
 
     while (true) {
+        int menuResult = ui.showLevelMenu();
+
+        // 랭킹 조회
+        if (menuResult == 99) {
+            system("cls");
+            ranking.show();
+
+            ui.gotoxy(10, 20);
+            cout << "입력하면 메뉴로 돌아갑니다.";
+
+            ui.waitAnyKeyNoEcho();
+            
+            system("cls");
+            continue;
+        }
+
         // 키 설명 + 시작 레벨 선택 (기존 input_data)
-        level = ui.showLevelMenu();
+        level = menuResult;
         resetGame();
 
         // 초기 블럭, 다음 블럭, 점수판 출력
@@ -113,8 +130,12 @@ void GameController::gameOverProcess() {
         ui.gotoxy(10, 7);
         cout << "이름을 입력하세요: ";
 
+        ui.setCursorVisible(true);
+
         string name;
         cin >> name;
+
+        ui.setCursorVisible(false);
 
         ranking.add(name, finalScore);
     }
@@ -144,6 +165,8 @@ void GameController::handleInput() {
                 printf("┗━━━━━━━━━━━━┛");
             }
             else {
+                ui.clearPauseLogo(ab_x, ab_y);
+
                 ui.showTotal(board.getGrid(), level, ab_x, ab_y);
                 ui.showNext(next, level);
                 ui.showGameStat(level, score.getScore(), lines, stage_data[level].clear_line);

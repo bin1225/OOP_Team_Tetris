@@ -17,6 +17,7 @@ class ConsoleUI
 public:
 	int gotoxy(int x, int y);
 	void SetColor(int color);
+	void setCursorVisible(bool visible);
 	void showGameOver();
 	void showLogo();
 
@@ -32,5 +33,7 @@ public:
 	void showTotal(const vector<vector<int>>& grid, int level, int ab_x, int ab_y);
 	void showItemStatus(const std::string& itemName, const std::string& itemDesc);
 	void showBlastEffect(int centerX, int centerY, int radius);
+	void clearPauseLogo(int ab_x, int ab_y);
+	void waitAnyKeyNoEcho();
 };
 
