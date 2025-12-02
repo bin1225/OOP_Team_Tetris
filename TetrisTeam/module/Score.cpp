@@ -3,7 +3,6 @@
 Score::Score() : score(0), combo(0) {
 }
 
-// �޺� �ʱ�ȭ
 void Score::resetScore() {
     score = 0;
     combo = 0;
@@ -13,11 +12,9 @@ void Score::resetCombo() {
     combo = 0;
 }
 
-// ���� Ŭ���� ���� �߰�
 void Score::addLineClear(int lines) {
     if (lines < 1 || lines > 4) return;
     
-    // ���� ���� ���� ���� ���� (1��=1x, 2��=2.5x, 3��=5x, 4��=8x)
     int multiplier = 0;
     switch(lines) {
         case 1: multiplier = 1; break;
@@ -32,10 +29,13 @@ void Score::addLineClear(int lines) {
 }
 
 
-// �޺� ���ʽ� ����
 void Score::addComboBonus() {
     int comboBonus = (combo - 1) * COMBO_BONUS;
 	score += comboBonus;
+}
+
+void Score::addItemBonus(int points){
+	score += points;
 }
 
 int Score::getScore() const {

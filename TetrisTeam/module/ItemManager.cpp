@@ -1,13 +1,14 @@
 #include "ItemManager.h"
 #include "Item.h"
 #include "LineClearItem.h"
+#include "BlastItem.h"
 #include <cstdlib>
 #include <ctime>
-
+#include <iostream>
+using namespace std;
 ItemManager::ItemManager(float customDropRate)
     : currentItem(nullptr), dropRate(customDropRate) {
 
-    // ���� �õ� �ʱ�ȭ (���α׷� ���� �� �� ����)
     static bool seeded = false;
     if (!seeded) {
         srand(static_cast<unsigned int>(time(nullptr)));
@@ -20,30 +21,30 @@ void ItemManager::reset() {
 }
 
 void ItemManager::tryGenerate(int linesCleared) {
-    // �̹� �������� ������ ������ �������� ����
     if (currentItem != nullptr) return;
 
-    // ������ Ŭ�������� �ʾ����� ���� �õ� ����
-    if (linesCleared <= 0) return;
+    //if (linesCleared <= 0) return;
 
-    // Ȯ�� ��� - Ŭ������ ���� ���� �������� Ȯ�� ����
-    float adjustedRate = dropRate * (1.0f + (linesCleared - 1) * 0.1f);
+    //float adjustedRate = dropRate + (linesCleared * 0.05f);
+    ////if (adjustedRate > 0.50f)
+    ////    adjustedRate = 0.50f; // 최대 확률 제한
 
-    // 0.0 ~ 1.0 ������ ���� �� ����
-    float randomValue = static_cast<float>(rand()) / RAND_MAX;
+    //float randomValue = static_cast<float>(rand()) / RAND_MAX;
 
-    if (randomValue < adjustedRate) {
-        currentItem = createRandomItem();
-    }
+    //if (randomValue < adjustedRate) {
+    //    currentItem = createRandomItem();
+    //}
+    cout << " 아이템 생성" << endl;
+    currentItem = createRandomItem();
 }
 
-bool ItemManager::useItem(Board& board, Score& score) {
+bool ItemManager::useItem(Board& board, Score& score, Block& block) {
     if (!currentItem) return false;
 
-    bool success = currentItem->use(board, score);
+    bool success = currentItem->use(board, score, block);
 
     if (success) {
-        currentItem.reset();  // ��� �� ������ ����
+        currentItem.reset();
     }
 
     return success;
@@ -72,17 +73,15 @@ float ItemManager::getDropRate() const {
 }
 
 std::unique_ptr<Item> ItemManager::createRandomItem() {
-    // ����� LineClearItem�� ����
-    // ���� �ٸ� ������ �߰� �� ���� ���� ���� ����
 
-    // int itemType = rand() % 3;  // 0, 1, 2 �� �ϳ�
-    // 
-    // switch(itemType) {
-    //     case 0: return std::make_unique<LineClearItem>();
-    //     case 1: return std::make_unique<BombItem>();
-    //     case 2: return std::make_unique<SlowDownItem>();
-    //     default: return std::make_unique<LineClearItem>();
-    // }
+     int itemType = rand() % 3;  
+     
+     switch(itemType) {
+         case 0: return std::make_unique<LineClearItem>();
+         case 1: return std::make_unique<BlastItem>();
+         //case 2: return std::make_unique<SlowDownItem>();
+         default: return std::make_unique<BlastItem>();
+     }
 
     return std::make_unique<LineClearItem>();
 }

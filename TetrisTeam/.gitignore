@@ -1,12 +1,13 @@
-# Visual Studio ±âº»
+# Visual Studio ê¸°ë³¸
 .vs/
 *.vcxproj.user
 *.suo
 *.user
 *.userosscache
 *.sln.docstates
+*.vcxproj
 
-# ºôµå »êÃâ¹°(¹«Á¶°Ç-ignore)
+# ë¹Œë“œ ì‚°ì¶œë¬¼(ë¬´ì¡°ê±´-ignore)
 Debug/
 Release/
 x64/
@@ -15,12 +16,12 @@ out/
 bin/
 obj/
 
-# ºôµå ·Î±×
+# ë¹Œë“œ ë¡œê·¸
 *.log
 *.tlog/
 *.tlog
 
-# ÀÓ½Ã/Ä³½Ã
+# ì„ì‹œ/ìºì‹œ
 *.obj
 *.pch
 *.pdb
@@ -28,14 +29,14 @@ obj/
 *.ipdb
 *.iobj
 
-# ÀÚµ¿ »ı¼º ÆÄÀÏ
+# ìë™ ìƒì„± íŒŒì¼
 *.dll
 *.exe
 *.cachefile
 *.ilk
 *.recipe
 
-# ±âÅ¸ ºÒÇÊ¿äÇÑ ÆÄÀÏ
+# ê¸°íƒ€ ë¶ˆí•„ìš”í•œ íŒŒì¼
 *.aps
 *.ncb
 *.opendb

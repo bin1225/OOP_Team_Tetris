@@ -1,8 +1,7 @@
 #pragma once
 #include "Item.h"
-
-class LineClearItem : public Item {
+class BlastItem : public Item {
 public:
-    LineClearItem();
+    BlastItem();
     virtual bool use(Board& board, Score& score, const Block& block) override;
 };

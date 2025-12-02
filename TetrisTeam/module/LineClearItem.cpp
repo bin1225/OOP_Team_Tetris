@@ -6,17 +6,16 @@
 using namespace std;
 
 LineClearItem::LineClearItem()
-    : Item("Line Clear", "Remove the top line") {
+    : Item("Line", "라인제거") {
 }
 
-bool LineClearItem::use(Board& board, Score& score) {
-    // TODO: Board Ŭ������ removeTopLine() �޼��� ȣ��
-    // bool success = board.removeTopLine();
-    // if (success) {
-    //     score.addItemBonus(50);
-    //     return true;
-    // }
-    // return false;
-    cout << "LineClearItem used: Top line cleared!" << endl;
+bool LineClearItem::use(Board& board, Score& score, const Block& block) {
+     int removed = board.removeTopLines(1);
+     if (removed > 0) {
+         score.addItemBonus(70);
+         itemUI.highlightLine(removed);
+         return true;
+     }
+     return false;
     return true;
 }

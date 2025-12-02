@@ -122,3 +122,81 @@ void Board::reset() {
 vector<vector<int>>& Board::getGrid() {
     return grid;
 }
+
+int Board::removeTopLines(int count) {
+    int lastRemovedRow = -1;
+
+    for (int i = 0; i < count; ++i) {
+
+        // ---- 1) 삭제 대상 라인 탐색 ----
+        int targetLine = -1;
+        for (int y = 0; y < HEIGHT - 1; ++y) {
+            for (int x = 1; x < WIDTH - 1; ++x) {
+                if (grid[y][x] != 0) {
+                    targetLine = y;
+                    break;
+                }
+            }
+            if (targetLine != -1) break;
+        }
+
+        // 삭제할 라인이 없으면 종료
+        if (targetLine == -1)
+            break;
+
+        lastRemovedRow = targetLine;
+
+        // ---- 2) 위의 라인을 아래로 한 칸씩 이동 ----
+        for (int row = targetLine; row > 0; --row) {
+            for (int col = 1; col < WIDTH - 1; ++col) {
+                grid[row][col] = grid[row - 1][col];
+            }
+        }
+
+        // ---- 3) 최상단 라인 비우기 ----
+        for (int col = 1; col < WIDTH - 1; ++col) {
+            grid[0][col] = 0;
+        }
+    }
+
+    return lastRemovedRow;
+}
+
+
+
+int Board::blastArea(int centerX, int centerY, int radius) {
+    int removed = 0;
+
+    for (int y = -radius; y <= radius; ++y) {
+        for (int x = -radius; x <= radius; ++x) {
+            int bx = centerX + x;
+            int by = centerY + y;
+
+            // 원형 거리 계산
+            if (x * x + y * y > radius * radius) continue;
+
+            if (bx > 0 && bx < WIDTH - 1 && by >= 0 && by < HEIGHT - 1) {
+                if (grid[by][bx] != 0) {
+                    grid[by][bx] = 0;
+                    removed++;
+                }
+            }
+        }
+    }
+
+    // 중력 정리
+    for (int x = 1; x < WIDTH - 1; x++) {
+        for (int y = HEIGHT - 2; y >= 0; y--) {
+            if (grid[y][x] != 0 && grid[y + 1][x] == 0) {
+                int yy = y;
+                while (yy + 1 < HEIGHT - 1 && grid[yy + 1][x] == 0) {
+                    grid[yy + 1][x] = grid[yy][x];
+                    grid[yy][x] = 0;
+                    yy++;
+                }
+            }
+        }
+    }
+
+    return removed;
+}

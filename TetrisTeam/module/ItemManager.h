@@ -7,25 +7,24 @@
 
 class ItemManager {
 private:
-    std::unique_ptr<Item> currentItem;  // ���� ���� ���� ������
-    float dropRate;                      // ������ ���� Ȯ��
-
-    static constexpr float DEFAULT_DROP_RATE = 0.2f;
+    std::unique_ptr<Item> currentItem; 
+    float dropRate;
+    static constexpr float DEFAULT_DROP_RATE = 0.9f;
 
 public:
     ItemManager(float customDropRate = DEFAULT_DROP_RATE);
 
-    void reset();                                    // ������ �ʱ�ȭ
-    void tryGenerate(int linesCleared);              // ������ ���� �õ�
-    bool useItem(Board& board, Score& score);        // ������ ���
-    bool hasItem() const;                            // ������ ���� ����
+    void reset(); 
+    void tryGenerate(int linesCleared); 
+    bool useItem(Board& board, Score& score, Block& block);
+    bool hasItem() const;
 
-    std::string getCurrentItemName() const;          // ���� ������ �̸�
-    std::string getCurrentItemDescription() const;   // ���� ������ ����
+    std::string getCurrentItemName() const;
+    std::string getCurrentItemDescription() const;
 
     void setDropRate(float rate);
     float getDropRate() const;
 
 private:
-    std::unique_ptr<Item> createRandomItem();        // ���� ������ ����
+    std::unique_ptr<Item> createRandomItem();
 };
