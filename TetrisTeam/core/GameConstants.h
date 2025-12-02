@@ -9,5 +9,8 @@
 #define KEY_UP			0x48
 #define KEY_DOWN		0x50
 
-#define KEY_A			0x41
-#define KEY_C			0x43
+#define KEY_A_UPPER    0x41  // 'A'
+#define KEY_A_LOWER    0x61  // 'a'
+
+#define KEY_C_UPPER    0x43  // 'C'
+#define KEY_C_LOWER    0x63  // 'c'

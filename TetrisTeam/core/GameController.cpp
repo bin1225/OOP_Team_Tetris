@@ -158,7 +158,7 @@ void GameController::handleInput() {
 
 
         // ★ A 키: 아이템 사용
-        if (keytemp == KEY_A) {
+        if (keytemp == KEY_A_UPPER || keytemp == KEY_A_LOWER) {
             if (itemManager.hasItem()) {
                 bool used = itemManager.useItem(board, score, current);
 
@@ -173,7 +173,7 @@ void GameController::handleInput() {
 
 
         // ★ C 키: 테스트용 아이템 생성 (강제 생성)
-        if (keytemp == KEY_C) {
+        if (keytemp == KEY_C_UPPER || keytemp == KEY_C_LOWER) {
             if (!itemManager.hasItem()) {
                 itemManager.tryGenerate(1);  // 이 함수 없으면 아래 참고
                 ui.showItemStatus(itemManager.getCurrentItemName(), itemManager.getCurrentItemDescription());
