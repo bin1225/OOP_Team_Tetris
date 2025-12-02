@@ -46,7 +46,7 @@ void ConsoleUI::showGameOver() {
     fflush(stdin);
     Sleep(1000);
 
-    _getche();
+    waitAnyKeyNoEcho();
     system("cls");
 }
 
@@ -98,17 +98,27 @@ void ConsoleUI::showLogo() {
             showCurrent(b3, 5, 1);
             showCurrent(b4, 5, 1);
         }
-        if (_kbhit()) break;
+        if (_kbhit()) {
+            int ch = _getch();
+            Sleep(10);
+            while (_kbhit()) {
+                _getch();
+            }
+            break;
+        }
         Sleep(30);
     }
-
-    _getche();
     system("cls");
 }
 
 int ConsoleUI::showLevelMenu() {
     int i = 0;
     string input;
+    // 랭킹 접속을 위한 키워드 모음
+    vector<string> rankKeyWords{
+        "rank", "Rank", "RANK",
+        "ranking", "Ranking", "RANKING"
+    };
 
     setCursorVisible(false);
     SetColor(GRAY);
@@ -133,6 +143,10 @@ int ConsoleUI::showLevelMenu() {
     gotoxy(10, 13);
     printf("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
 
+    SetColor(YELLOW);
+    gotoxy(10, 4);
+    printf("Type 'rank' to view Top 10");
+
     setCursorVisible(true);
     while (true) {
         gotoxy(10, 3);
@@ -141,6 +155,13 @@ int ConsoleUI::showLevelMenu() {
         gotoxy(34, 3);
 
         getline(cin, input);
+
+        for (const string& keyword : rankKeyWords) {
+            if (input == keyword) {
+                system("cls");
+                return 99; // 랭킹 조회 출력값
+            }
+        }
 
         if (input.length() == 1 && input[0] >= '1' && input[0] <= '8') {
             setCursorVisible(false);
@@ -369,4 +390,28 @@ void ConsoleUI::showBlastEffect(int centerX, int centerY, int radius) {
     }
 
     SetColor(BLACK);
+}
+
+void ConsoleUI::clearPauseLogo(int ab_x, int ab_y)
+{
+    SetColor(BLACK);
+
+    for (int dy = 0; dy < 3; ++dy) {
+        gotoxy(ab_x + 9, ab_y + 8 + dy);
+        printf("              ");
+    }
+}
+
+void ConsoleUI::waitAnyKeyNoEcho()
+{
+    setCursorVisible(false);
+
+    while (_kbhit()) {
+        _getch();
+    }
+    int ch = _getch();
+    Sleep(10);
+    while (_kbhit()) {
+        _getch();
+    }
 }
