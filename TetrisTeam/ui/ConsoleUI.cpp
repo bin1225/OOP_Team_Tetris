@@ -6,12 +6,10 @@
 using namespace std;
 
 int ConsoleUI::gotoxy(int x, int y) {
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    COORD pos;
-    if (x < 0) x = -x;
-    if (y < 0) y = -y;
-    pos.Y = static_cast<short>(y);
-    pos.X = static_cast<short>(x);
+    // static 선언으로 매번 호출 방지
+    static HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    COORD pos{ static_cast<short>(x < 0 ? -x : x),
+               static_cast<short>(y < 0 ? -y : y) };
     SetConsoleCursorPosition(hConsole, pos);
     return 0;
 }
@@ -30,7 +28,7 @@ void ConsoleUI::setCursorVisible(bool visible) {
 }
 
 void ConsoleUI::showGameOver() {
-    system("cls");
+    clearConsole();
     setCursorVisible(false);
     SetColor(RED);
     gotoxy(15, 8);
@@ -47,7 +45,7 @@ void ConsoleUI::showGameOver() {
     Sleep(1000);
 
     waitAnyKeyNoEcho();
-    system("cls");
+    clearConsole();
 }
 
 void ConsoleUI::showLogo() {
@@ -108,7 +106,7 @@ void ConsoleUI::showLogo() {
         }
         Sleep(30);
     }
-    system("cls");
+    clearConsole();
 }
 
 int ConsoleUI::showLevelMenu() {
@@ -158,14 +156,14 @@ int ConsoleUI::showLevelMenu() {
 
         for (const string& keyword : rankKeyWords) {
             if (input == keyword) {
-                system("cls");
+                clearConsole();
                 return 99; // 랭킹 조회 출력값
             }
         }
 
         if (input.length() == 1 && input[0] >= '1' && input[0] <= '8') {
             setCursorVisible(false);
-            system("cls");
+            clearConsole();
             return (input[0] - '0') - 1;
         }
 
@@ -414,4 +412,20 @@ void ConsoleUI::waitAnyKeyNoEcho()
     while (_kbhit()) {
         _getch();
     }
+}
+
+// system(cls) 대신 사용하여 성능 향상
+void ConsoleUI::clearConsole()
+{
+    static HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    DWORD cellCount, count;
+    COORD homeCoords = { 0, 0 };
+
+    if (!GetConsoleScreenBufferInfo(hConsole, &csbi)) return;
+    cellCount = csbi.dwSize.X * csbi.dwSize.Y;
+
+    FillConsoleOutputCharacter(hConsole, ' ', cellCount, homeCoords, &count);
+    FillConsoleOutputAttribute(hConsole, csbi.wAttributes, cellCount, homeCoords, &count);
+    SetConsoleCursorPosition(hConsole, homeCoords);
 }

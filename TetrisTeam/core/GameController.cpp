@@ -11,15 +11,15 @@ void GameController::init() {
     srand(static_cast<unsigned>(time(nullptr)));
 
     // 스테이지 데이터 설정(speed, stick_rate, clear_line)
-    stage_data[0] = { 40, 20, 2 };
-    stage_data[1] = { 38, 18, 5 };
+    stage_data[0] = { 40, 20, 5 };
+    stage_data[1] = { 38, 18, 7 };
     stage_data[2] = { 35, 18, 10 };
     stage_data[3] = { 30, 17, 20 };
-    stage_data[4] = { 25, 16, 20 };
-    stage_data[5] = { 20, 14, 20 };
-    stage_data[6] = { 15, 14, 20 };
-    stage_data[7] = { 10, 13, 20 };
-    stage_data[8] = { 6, 12, 20 };
+    stage_data[4] = { 25, 16, 25 };
+    stage_data[5] = { 20, 14, 30 };
+    stage_data[6] = { 15, 14, 35 };
+    stage_data[7] = { 10, 13, 40 };
+    stage_data[8] = { 6, 12, 50 };
     stage_data[9] = { 4, 11, 99999 };
 
     ab_x = 5;
@@ -50,7 +50,7 @@ void GameController::run() {
 
         // 랭킹 조회
         if (menuResult == 99) {
-            system("cls");
+            ui.clearConsole();
             ranking.show();
 
             ui.gotoxy(10, 20);
@@ -58,7 +58,7 @@ void GameController::run() {
 
             ui.waitAnyKeyNoEcho();
             
-            system("cls");
+            ui.clearConsole();
             continue;
         }
 
@@ -98,7 +98,6 @@ void GameController::run() {
 					ui.showTotal(board.getGrid(), level, ab_x, ab_y);     // 벽 색깔 갱신
 					ui.showNext(next, level); // 오른쪽 박스 테두리 갱신
 					ui.showCurrent(current, ab_x, ab_y);
-					itemManager.reset(); // 아이템 초기화
                     ui.showItemStatus(itemManager.getCurrentItemName(), itemManager.getCurrentItemDescription());
 				}
 			}
@@ -124,7 +123,7 @@ void GameController::gameOverProcess() {
     int finalScore = score.getScore();
 
     if (ranking.isTop10(finalScore)) {
-        system("cls");
+        ui.clearConsole();
         ui.gotoxy(10, 5);
         cout << "축하합니다! TOP 10에 성공했습니다!";
         ui.gotoxy(10, 7);
@@ -139,13 +138,13 @@ void GameController::gameOverProcess() {
 
         ranking.add(name, finalScore);
     }
-    system("cls");
+    ui.clearConsole();
     ranking.show();
 
     ui.gotoxy(10, 20);
     cout << "입력하면 메뉴로 돌아갑니다.";
     _getch();
-    system("cls");
+    ui.clearConsole();
 }
 
 void GameController::handleInput() {
@@ -183,12 +182,25 @@ void GameController::handleInput() {
         // ★ A 키: 아이템 사용
         if (keytemp == KEY_A_UPPER || keytemp == KEY_A_LOWER) {
             if (itemManager.hasItem()) {
+
+                // 아이템 사용 로직 실행
                 bool used = itemManager.useItem(board, score, current);
 
                 if (used) {
+                    // 현재 블록 화면에서 지우기
+                    ui.eraseCurrent(current, ab_x, ab_y);
+                    // 보드, 점수, 아이템 상태창 갱신
                     ui.showTotal(board.getGrid(), level, ab_x, ab_y);
                     ui.showGameStat(level, score.getScore(), lines, stage_data[level].clear_line);
                     ui.showItemStatus(itemManager.getCurrentItemName(), itemManager.getCurrentItemDescription());
+                
+                    // 현재 블록 폐기 및 다음 블록 소환
+                    current = next;
+                    next = Block::createBlock();
+
+                    // 새 블록과 next 미리보기 ui 갱신
+                    ui.showNext(next, level);
+                    ui.showCurrent(current, ab_x, ab_y);
                 }
             }
             return;

@@ -10,7 +10,7 @@ LineClearItem::LineClearItem()
 }
 
 bool LineClearItem::use(Board& board, Score& score, const Block& block) {
-     int removed = board.removeTopLines(1);
+     int removed = board.removeBottomLines(1);
      if (removed > 0) {
          score.addItemBonus(70);
          itemUI.highlightLine(removed);

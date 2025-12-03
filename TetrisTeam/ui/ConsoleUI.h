@@ -35,5 +35,6 @@ public:
 	void showBlastEffect(int centerX, int centerY, int radius);
 	void clearPauseLogo(int ab_x, int ab_y);
 	void waitAnyKeyNoEcho();
+	void clearConsole();
 };
 
