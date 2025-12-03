@@ -78,8 +78,8 @@ std::unique_ptr<Item> ItemManager::createRandomItem() {
      
      switch(itemType) {
          case 0: return std::make_unique<LineClearItem>();
-         case 1: return std::make_unique<BlastItem>();
-         //case 2: return std::make_unique<SlowDownItem>();
+         case 1: 
+         case 2:
          default: return std::make_unique<BlastItem>();
      }
 

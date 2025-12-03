@@ -162,6 +162,52 @@ int Board::removeTopLines(int count) {
     return lastRemovedRow;
 }
 
+int Board::removeBottomLines(int count)
+{
+    int linesRemoved = 0;
+    int lastRemovedRow = -1;
+
+    for (int i = 0; i < count; ++i) {
+
+        // ---- 1) 삭제 대상 라인 탐색 ----
+        int targetLine = -1;
+        for (int y = HEIGHT-2; y >= 0; --y) {
+            bool hasBlock = false;
+            for (int x = 1; x < WIDTH - 1; ++x) {
+                if (grid[y][x] != 0) {
+                    hasBlock = true;
+                    break;
+                }
+            }
+            if (hasBlock) {
+                targetLine = y;
+                break;
+            }
+            
+        }
+        // 삭제할 라인이 없으면 종료
+        if (targetLine == -1)
+            break;
+
+        lastRemovedRow = targetLine;
+        linesRemoved++;
+
+        // ---- 2) 위의 라인을 아래로 한 칸씩 이동 ----
+        for (int row = targetLine; row > 0; --row) {
+            for (int col = 1; col < WIDTH - 1; ++col) {
+                grid[row][col] = grid[row - 1][col];
+            }
+        }
+
+        // ---- 3) 최상단 라인 비우기 ----
+        for (int col = 1; col < WIDTH - 1; ++col) {
+            grid[0][col] = 0;
+        }
+    }
+
+    return (linesRemoved > 0) ? lastRemovedRow : -1;
+}
+
 
 
 int Board::blastArea(int centerX, int centerY, int radius) {
