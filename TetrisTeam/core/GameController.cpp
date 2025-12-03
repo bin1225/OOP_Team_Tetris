@@ -50,7 +50,7 @@ void GameController::run() {
 
         // 랭킹 조회
         if (menuResult == 99) {
-            system("cls");
+            ui.clearConsole();
             ranking.show();
 
             ui.gotoxy(10, 20);
@@ -58,7 +58,7 @@ void GameController::run() {
 
             ui.waitAnyKeyNoEcho();
             
-            system("cls");
+            ui.clearConsole();
             continue;
         }
 
@@ -123,7 +123,7 @@ void GameController::gameOverProcess() {
     int finalScore = score.getScore();
 
     if (ranking.isTop10(finalScore)) {
-        system("cls");
+        ui.clearConsole();
         ui.gotoxy(10, 5);
         cout << "축하합니다! TOP 10에 성공했습니다!";
         ui.gotoxy(10, 7);
@@ -138,13 +138,13 @@ void GameController::gameOverProcess() {
 
         ranking.add(name, finalScore);
     }
-    system("cls");
+    ui.clearConsole();
     ranking.show();
 
     ui.gotoxy(10, 20);
     cout << "입력하면 메뉴로 돌아갑니다.";
     _getch();
-    system("cls");
+    ui.clearConsole();
 }
 
 void GameController::handleInput() {
