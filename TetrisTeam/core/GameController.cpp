@@ -271,7 +271,7 @@ int GameController::moveBlock() {
             score.addComboBonus();
             itemManager.tryGenerate(linesCleared);
             ui.showItemStatus(itemManager.getCurrentItemName(), itemManager.getCurrentItemDescription());
-
+            ui.showGameStat(level, score.getScore(), lines, stage_data[level].clear_line);
         } else {
             score.resetCombo();
         }
@@ -352,6 +352,7 @@ void GameController::hardDrop() {
         score.addComboBonus();
         itemManager.tryGenerate(linesCleared);
         ui.showItemStatus(itemManager.getCurrentItemName(), itemManager.getCurrentItemDescription());
+        ui.showGameStat(level, score.getScore(), lines, stage_data[level].clear_line);
     } else {
         score.resetCombo();
     }
