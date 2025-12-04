@@ -308,6 +308,8 @@ void GameController::rotateCurrentBlock() {
 }
 
 void GameController::moveLeft() {
+    if (current.getY() < 0) return;
+
     Block moved = current;
     moved.moveLeft();
 
@@ -319,6 +321,8 @@ void GameController::moveLeft() {
 }
 
 void GameController::moveRight() {
+    if (current.getY() < 0) return;
+
     Block moved = current;
     moved.moveRight();
 
